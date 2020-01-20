@@ -54,9 +54,6 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_bp, url_prefix='/admin')
 
     from app.main import bp as main_bp
-    app.register_blueprint(main_bp, url_prefix='/main')
-
-    from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
     from app.api import bp as api_bp
