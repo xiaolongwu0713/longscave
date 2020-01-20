@@ -1,0 +1,1 @@
+all xxx-halflingsxxx.ttf/woff/woff2 are just copy of glyphicones-regular.ttf/woff/woff2
