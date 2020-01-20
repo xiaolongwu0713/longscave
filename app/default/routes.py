@@ -14,14 +14,14 @@ from app.default import bp
 # from longscave import app
 
 
-@bp.route('/index', methods=['GET', 'POST'])
-@bp.route('/', methods=['GET', 'POST'])
-def index():
-    # flash('jump to main')
-    #flash(current_user.username)
-    return render_template('default/index.html')
-    # return '<title>我的第一个 HTML 页面</title>'
-    # return redirect(url_for('default.explore'))
+# @bp.route('/index', methods=['GET', 'POST'])
+# @bp.route('/', methods=['GET', 'POST'])
+# def index():
+#     # flash('jump to main')
+#     #flash(current_user.username)
+#     return render_template('default/index.html')
+#     # return '<title>我的第一个 HTML 页面</title>'
+#     # return redirect(url_for('default.explore'))
 
 
 
