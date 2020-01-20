@@ -8,8 +8,11 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User
 from app.auth.email import send_password_reset_email
+from flask_login import current_user, login_required
+
 
 @bp.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     # flash('jump to main')
     #flash(current_user.username)
