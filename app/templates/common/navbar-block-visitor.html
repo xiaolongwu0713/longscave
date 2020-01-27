@@ -1,17 +1,40 @@
-      <header class="header">
-        <nav class="navbar">
+ <nav class="navbar navbar-default" role="navigation">
           <div class="container-fluid">
-            <div class="navbar-holder d-flex align-items-center justify-content-between">
+          <div class="container">
+            <div class="row">
+            <div class="col-md-8">
               <div class="navbar-header">
 <!--                  TODO: enale side manual for Admin role only-->
 <!--                  <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"> </i></a>-->
-                  <a class="navbar-brand" href="#" style="color:#666;font-size:18px;">Long's Cave
+                  <a class="navbar-brand" href="#" style="color:#666;font-size:18px;">Long's Cave</a>
 <!--                      <img src="static/img/ai-1.jpg" alt="Logo" style="width:40px;">-->
-                  </a>
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#visitor-navbar-collaspse-1">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+              </div>
+              <div class="collapse navbar-collapse" id="visitor-navbar-collaspse-1">
+                  <ul class="list-unstyled list-inline">
+                      <li>
+                          <a href="#">Home</a>
+                      </li>
+                      <li>
+                          <a href="#">Course</a>
+                      </li>
+                      <li>
+                          <a href="#">About me</a>
+                      </li>
+                      <li>
+                          <a href="#">Hire me</a>
+                      </li>
+                  </ul>
               </div>
 
-              <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+
               {% if current_user.is_authenticated %}
+              <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
                 <!-- Notifications dropdown-->
                 <!--DONE: disable the notification if not login-->
                 <li class="nav-item dropdown"> <a id="notifications" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link"><i class="fa fa-bell"></i><span class="badge badge-warning">12</span></a>
@@ -60,7 +83,11 @@
                     <li><a rel="nofollow" href="#" class="dropdown-item all-notifications text-center"> <strong> <i class="fa fa-envelope"></i>Read all messages    </strong></a></li>
                   </ul>
                 </li>
+                </ul>
                   {% endif %}
+            </div>
+              <div class="col-md-4">
+                <ul class="list-unstyled list-inline">
                 <!-- Languages dropdown    -->
                 <li class="nav-item dropdown"><a id="languages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link language dropdown-toggle"><img src="/static/img/flags/16/GB.png" alt="English"><span class="d-none d-sm-inline-block">English</span></a>
                   <ul aria-labelledby="languages" class="dropdown-menu">
@@ -74,8 +101,9 @@
                   {% else %}
                   <li class="nav-item"><a href="{{ url_for('auth.login') }}" class="nav-link logout"> <span class="d-none d-sm-inline-block">Login</span><i class="fa fa-sign-out"></i></a></li>
                   {% endif %}
-              </ul>
+                </ul>
+              </div>
             </div>
-          </div>
-        </nav>
-      </header>
+       </div>
+       </div>
+ </nav>
