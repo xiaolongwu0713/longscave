@@ -8,8 +8,12 @@ nav.navbar a.nav-link {
     padding-left: 10px !important;
 }
 /* format Hire Me */
+#hireme .post .post_body p {
+    font-size: 200%;
+    line-height: 150%;
+}
 #hireme .post .post_body ul {
-    font-size: 220% !important;
+    font-size: 220%;
     line-height: 150%;
 }
 /* Footer */
