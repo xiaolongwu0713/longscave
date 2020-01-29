@@ -7,6 +7,9 @@ nav.navbar a.nav-link {
     font-size: 0.9em !important;
     padding-left: 10px !important;
 }
-/* Right Navbar */
-
+/* format Hire Me */
+#main .post .post_body ul {
+    font-size: 120%;
+    line-height: 150%;
+}
 /* Footer */

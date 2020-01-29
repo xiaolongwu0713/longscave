@@ -14,11 +14,11 @@ from app.visitor import bp
 # from longscave import app
 
 
-@bp.route('/aa', methods=['GET', 'POST'])
+@bp.route('/hireMe', methods=['GET', 'POST'])
 def index():
     # flash('jump to main')
     #flash(current_user.username)
-    return render_template('./visitor.html')
+    return render_template('./hireMe.html')
     # return '<title>我的第一个 HTML 页面</title>'
     # return redirect(url_for('default.explore'))
 
