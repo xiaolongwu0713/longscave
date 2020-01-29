@@ -14,7 +14,7 @@ from app.visitor import bp
 # from longscave import app
 
 
-@bp.route('/hireMe', methods=['GET', 'POST'])
+@bp.route('/hireme', methods=['GET', 'POST'])
 def index():
     # flash('jump to main')
     #flash(current_user.username)
