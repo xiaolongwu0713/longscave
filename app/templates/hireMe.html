@@ -1,0 +1,22 @@
+{% extends 'bootstrap/base.html' %}
+
+{% include '/common/head-block.html' %}
+
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+<div class="container-fluid">
+    <div class="row">
+    <div class="col-md-8">
+
+    </div>
+     <div class="col-md-4 sidebar-bg" id="rightSideBar-1">
+         {% include '/common/rightSideBar-AboutMe.html' %}
+     </div>
+   </div>
+</div>
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+{% endblock body %}

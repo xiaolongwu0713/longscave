@@ -14,7 +14,7 @@ from app.visitor import bp
 # from longscave import app
 
 
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/aa', methods=['GET', 'POST'])
 def index():
     # flash('jump to main')
     #flash(current_user.username)
@@ -23,7 +23,7 @@ def index():
     # return redirect(url_for('default.explore'))
 
 
-@bp.route('/aa')
+@bp.route('/')
 #@login_required
 def explore():
     page = request.args.get('page', 1, type=int)
