@@ -1,9 +1,12 @@
+/* Navbar Button */
 nav.navbar a.navbar-brand {
     font-size: 2.0em;
     color: #666;
 }
 nav.navbar a.nav-link {
     font-size: 0.9em !important;
-    padding-left: 30px !important;
+    padding-left: 10px !important;
 }
+/* Right Navbar */
 
+/* Footer */
