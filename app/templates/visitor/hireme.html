@@ -1,0 +1,43 @@
+{% extends 'bootstrap/base.html' %}
+
+{% include '/common/head-block.html' %}
+
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+<div class="container-fluid">
+    <div class="row">
+    <div class="col-md-8">
+      <div id="hireme">
+    <div class="post">
+        <h1>Hire Me!</h1>
+        <div class="social-bar"></div>
+        <div class="post_body">
+            <p>Some introduction</p>
+            <ul>
+                <li>list item</li>
+                <li>list item</li>
+                <li>list item</li>
+                <li>list item</li>
+            </ul>
+            <center>
+                <!-- TODO: Calendly link widget begin -->
+                <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+                <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript"></script>
+                <a class="btn btn-primary btn-lg" href="" onclick="Calendly.showPopupWidget('https://calendly.com/miguelgrinberg/60min');return false;">Schedule a Consultation!</a>
+                <!-- Calendly link widget end -->
+            </center>
+        </div>
+    </div>
+</div>
+    </div>
+     <div class="col-md-4 sidebar-bg" id="rightSideBar-1">
+         {% include '/common/rightSideBar-AboutMe.html' %}
+     </div>
+   </div>
+</div>
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+{% endblock body %}

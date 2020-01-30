@@ -13,16 +13,16 @@
       <div class="collapse navbar-collapse" id="visitor-navbar-collaspse-1">
           <ul class="navbar-nav">
               <li class="nav-item">
-                  <a class="nav-link" href="#">Home</a>
+                  <a class="nav-link" href="{{ url_for('visitor.home') }}">Home</a>
               </li>
               <li class="nav-item">
-                  <a  class="nav-link" href="#">Course</a>
+                  <a  class="nav-link" href="{{ url_for('visitor.course') }}">Course</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="#">About me</a>
+                  <a class="nav-link" href="{{ url_for('visitor.aboutme') }}">About me</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="#">Hire me</a>
+                  <a class="nav-link" href="{{ url_for('visitor.hireme') }}">Hire me</a>
               </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
