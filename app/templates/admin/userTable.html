@@ -1,0 +1,84 @@
+<div class="container" style = "position:absolute; padding:0px; margin:0px;right:0%; top:0%;left:0%;outline: none; width:100%">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+						<h2><b> {{ env_name }} </b></h2>
+					</div>
+					{% if current_user.is_authenticated %}
+					<div class="col-sm-6">
+						<button data-target="#addRecordModal" class="btn btn-success" data-toggle="modal"><i class="material-icons"></i> <span>Add New Records</span></button>
+					</div>
+					{% endif %}
+                </div>
+            </div>
+            <table class="table table-striped table-hover" id=mytable>
+                <thead>
+                    <tr>
+						<th>
+							<span class="custom-checkbox" hidden>
+								<input type="checkbox" id="selectAll">
+								<label for="selectAll"></label>
+							</span>
+						</th>
+                        <th style="width: 10%">IP</th>
+                        <th style="width: 20%">Connection string</th>
+						<th style="width: 10%">Description</th>
+                        <th style="width: 30%" >backup policy</th>
+                        <th style="width: 30%">comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   {% for row in rows %}
+					<tr>
+						<td>
+							<span class="custom-checkbox" hidden>
+								<input type="checkbox" id="checkbox5" name="options[]" value="1">
+								<label for="checkbox5"></label>
+							</span>
+						</td>
+                        <td>{{ row.ipaddress }}</td>
+                        <td>{{ row.connectionstr }}</td>
+						<td>{{ row.description }}</td>
+                        <td>{{ row.backupdesc }}</td>
+                        <td>{{ row.jobs }}</td>
+                        {% if current_user.is_authenticated %}
+                        <!-- changeme -->
+                        <td>
+                            <button data-target="#editEmployeeModal" class="btn btn-primary btn-xs" data-uniqueid="{{ row.uniqId }}" data-col1="{{ row.ipaddress }}" data-col2="{{ row.connectionstr }}" data-col3="{{ row.description }}" data-col4="{{ row.backupdesc }}" data-col5="{{ row.jobs }}" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"></i>E</button>
+                            <!-- changeme -->
+                            <button data-target="#deleteEmployeeModal" class="btn btn btn-danger btn-xs" data-toggle="modal" data-uniqueid="{{ row.uniqId }}" ><i class="material-icons" data-toggle="tooltip" title="Delete"></i>X</button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                   {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="...">
+        		<ul class="pager">
+            		<li class="previous{% if not prev_url %} disabled{% endif %}">
+                		<a href="{{ prev_url or '#' }}">
+                    	<span aria-hidden="true">&larr;</span> {{ _('Previous') }}
+                		</a>
+            		</li>
+            		<li class="next{% if not next_url %} disabled{% endif %}">
+                		<a href="{{ next_url or '#' }}">
+                    	{{ _('Next') }} <span aria-hidden="true">&rarr;</span>
+                		</a>
+            		</li>
+        		</ul>
+    		</nav>
+			<!-- <div class="clearfix">
+                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                <ul class="pagination">
+                    <li class="page-item disabled"><a href="#">Previous</a></li>
+                    <li class="page-item"><a href="#" class="page-link">1</a></li>
+                    <li class="page-item"><a href="#" class="page-link">2</a></li>
+                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
+                    <li class="page-item"><a href="#" class="page-link">4</a></li>
+                    <li class="page-item"><a href="#" class="page-link">5</a></li>
+                    <li class="page-item"><a href="#" class="page-link">Next</a></li>
+                </ul>
+            </div> -->
+        </div>
+</div>

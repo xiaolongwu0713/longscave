@@ -1,0 +1,40 @@
+<div id="sendMeMessageModal" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h4 class="modal-title">Send me message</h4>
+                    <input display="inline-block" type="text" id="env_name" readonly="readonly" value={{ env_name }}>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Your Name:</label>
+                        <input type="text" class="form-control" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label>Where are you? (country/city)</label>
+                        <input type="email" class="form-control" id="location">
+                    </div>
+                    <div class="form-group">
+                        <label>Telephone:</label>
+                        <input class="form-control" id="tel">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="text" class="form-control" id="email">
+                    </div>
+                    <!--TODO: limit message length-->
+                    <div class="form-group">
+                        <label>Message content:</label>
+                        <textarea class="form-control" id="msg"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input id="btnSendMeMessage" type="button" class="btn btn-success" value="Send">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -263,6 +263,23 @@ class Message(db.Model):
         return '<Message {}>'.format(self.body)
 
 
+# message to me from anyone
+class MessageToMe(db.Model):
+    __tablename__ = 'messagetome'
+    __table_args__ = (
+        db.PrimaryKeyConstraint('username', 'tel'),
+    )
+    username = db.Column(db.String(64))
+    location = db.Column(db.String(64))
+    tel = db.Column(db.String(24))
+    email = db.Column(db.String(50))
+    msg = db.Column(db.String(1000))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<MessageToMe {}>'.format(self.username)
+
+
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True)

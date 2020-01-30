@@ -16,4 +16,18 @@ nav.navbar a.nav-link {
     font-size: 220%;
     line-height: 150%;
 }
-/* Footer */
+/* SendMeMessageModal */
+#sendMeMessageModal {
+top:10%;
+right:10%;
+left:10%;
+outline: none;
+width:100%;
+height:80%;
+opacity:4;
+}
+
+.modal-dialog {
+top: 30%;
+position: relative;
+}

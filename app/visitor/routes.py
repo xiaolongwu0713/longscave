@@ -8,14 +8,16 @@ from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db, login
 # from app.main.forms import EditProfileForm, PostForm, SearchForm
-from app.models import User, Post
+from app.models import User, Post, MessageToMe
 from app.translate import translate
 from app.visitor import bp
+
+
 # from longscave import app
 
 
 @bp.route('/')
-#@login_required
+# @login_required
 def home():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
@@ -28,10 +30,11 @@ def home():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+
 @bp.route('/hireme', methods=['GET', 'POST'])
 def hireme():
     # flash('jump to main')
-    #flash(current_user.username)
+    # flash(current_user.username)
     return render_template('/visitor/hireme.html')
     # return '<title>我的第一个 HTML 页面</title>'
     # return redirect(url_for('default.explore'))
@@ -40,12 +43,30 @@ def hireme():
 @bp.route('/aboutme', methods=['GET', 'POST'])
 def aboutme():
     # flash('jump to main')
-    #flash(current_user.username)
+    # flash(current_user.username)
     return render_template('/visitor/aboutme.html')
 
 
 @bp.route('/course', methods=['GET', 'POST'])
 def course():
     # flash('jump to main')
-    #flash(current_user.username)
+    # flash(current_user.username)
     return render_template('/visitor/course.html')
+
+
+# name location tel email msg
+# query table data against mysql directly, no sqlalchemy
+@bp.route('/sendMeMessageModal', methods=['GET', 'POST'])
+def sendMeMessageModal():
+    # uniqueId = request.form['uniqueid']
+    name = request.form['name']
+    location = request.form['location']
+    tel = request.form['tel']
+    email = request.form['email']
+    msg = request.form['msg']
+    flash(name + location + email + tel + msg)
+    #message = MessageToMe(username=name, location=location, tel=tel, email=email, msg=msg)
+    message = MessageToMe(username=name, location=location, tel=tel, email=email, msg=msg)
+    db.session.add(message)
+    db.session.commit()
+    return jsonify('success')
