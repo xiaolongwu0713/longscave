@@ -264,6 +264,7 @@ class Message(db.Model):
 
 
 # message to me from anyone
+# TODO: use a auto-incremental column as primary
 class MessageToMe(db.Model):
     __tablename__ = 'messagetome'
     __table_args__ = (

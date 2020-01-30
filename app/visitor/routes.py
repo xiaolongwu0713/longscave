@@ -54,8 +54,7 @@ def course():
     return render_template('/visitor/course.html')
 
 
-# name location tel email msg
-# query table data against mysql directly, no sqlalchemy
+# visitor send message in modal. This function receive message and store in db
 @bp.route('/sendMeMessageModal', methods=['GET', 'POST'])
 def sendMeMessageModal():
     # uniqueId = request.form['uniqueid']
@@ -64,8 +63,7 @@ def sendMeMessageModal():
     tel = request.form['tel']
     email = request.form['email']
     msg = request.form['msg']
-    flash(name + location + email + tel + msg)
-    #message = MessageToMe(username=name, location=location, tel=tel, email=email, msg=msg)
+    #flash(name + location + email + tel + msg)
     message = MessageToMe(username=name, location=location, tel=tel, email=email, msg=msg)
     db.session.add(message)
     db.session.commit()
