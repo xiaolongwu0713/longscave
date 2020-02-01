@@ -13,6 +13,7 @@ from elasticsearch import Elasticsearch
 from redis import Redis
 import rq
 from config import Config
+from flask_ckeditor import CKEditor
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -23,6 +24,7 @@ mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
 babel = Babel()
+ckeditor = CKEditor()
 
 
 def create_app(config_class=Config):
@@ -36,6 +38,7 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     babel.init_app(app)
+    ckeditor.init_app(app)
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if app.config['ELASTICSEARCH_URL'] else None
     app.redis = Redis.from_url(app.config['REDIS_URL'])

@@ -21,7 +21,9 @@
     </div>
 </form>
 
-{{ ckeditor.load(pkg_type="standard",custom_url=url_for('static', filename='ckeditor4.11/ckeditor.js')) }}
+
+{{ ckeditor.load(pkg_type="standard") }}
+{{ ckeditor.load() }}
 {{ ckeditor.config(name='post') }}
 
 
