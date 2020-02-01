@@ -28,9 +28,9 @@ class PostForm(FlaskForm):
     submit = SubmitField(_l('Submit'))
 
 
-class CKPostForm(FlaskForm):
+class CKarticle(FlaskForm):
     title = StringField(_l('title label'), validators=[DataRequired()])
-    post = CKEditorField(_l('post label'), validators=[DataRequired()])
+    content = CKEditorField(_l('post label'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
 

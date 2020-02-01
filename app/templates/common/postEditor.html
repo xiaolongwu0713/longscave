@@ -11,12 +11,12 @@
         {% endif %}
         {{ form.title(class_='form-control') }}
         <p>Content:</p>
-        {% if form.post.errors %}
-            {% for e in form.post.errors %}
+        {% if form.content.errors %}
+            {% for e in form.content.errors %}
                 <p class="help-block">{{ e }}</p>
             {% endfor %}
         {% endif %}
-        {{form.post}}<br><br>
+        {{form.content}}<br><br>
         {{ form.submit }}
     </div>
 </form>
@@ -24,7 +24,7 @@
 
 {{ ckeditor.load(pkg_type="standard") }}
 {{ ckeditor.load() }}
-{{ ckeditor.config(name='post') }}
+{{ ckeditor.config(name='content') }}
 
 
 <!--

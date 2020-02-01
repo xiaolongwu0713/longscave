@@ -8,20 +8,30 @@ from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db, login
 # from app.main.forms import EditProfileForm, PostForm, SearchForm
-from app.models import User, Post, MessageToMe
+from app.models import User, Post, MessageToMe,Article
 from app.translate import translate
 from app.visitor import bp
-from app.main.forms import CKPostForm
+from app.main.forms import CKarticle
 
 
 # from longscave import app
 
 
-@bp.route('/')
-@bp.route('/index')
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/index', methods=['GET', 'POST'])
 # @login_required
 def index():
-    ckform = CKPostForm()
+    ckarticle = CKarticle()
+    if ckarticle.validate_on_submit():
+        language = guess_language(ckarticle.content.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        article = Article(body=ckarticle.content.data, author=current_user, language=language, title=ckarticle.title.data)
+        db.session.add(article)
+        db.session.commit()
+        flash(_('Your article is now live!'))
+        # return json.dumps({'body': str(form.post.data), 'author': current_user,'language': language, 'title': str(form.title.data)})
+        return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
@@ -29,7 +39,7 @@ def index():
         if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('/visitor/visitor.html', title=_('Explore'),form=ckform,
+    return render_template('/visitor/visitor.html', title=_('Explore'),form=ckarticle,
                            posts=posts.items, next_url=next_url,prev_url=prev_url)
 
 
