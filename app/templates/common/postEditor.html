@@ -2,15 +2,14 @@
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <div class="form-group" style="height: 80px; width: 100%">
-        {{ form.title.label }}<br>
+        <p>Title:</p>
         {% if form.title.errors %}
             {% for e in form.title.errors %}
                 <p class="help-block">{{ e }}</p>
             {% endfor %}
         {% endif %}
-        {{ form.title(class_='form-control') }}<br><br>
-
-        {{ form.post.label }}<br>
+        {{ form.title(class_='form-control') }}
+        <p>Content:</p>
         {% if form.post.errors %}
             {% for e in form.post.errors %}
                 <p class="help-block">{{ e }}</p>

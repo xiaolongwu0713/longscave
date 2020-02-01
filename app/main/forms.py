@@ -29,7 +29,7 @@ class PostForm(FlaskForm):
 
 
 class CKPostForm(FlaskForm):
-    title = TextAreaField(_l('title label'), validators=[DataRequired()])
+    title = StringField(_l('title label'), validators=[DataRequired()])
     post = CKEditorField(_l('post label'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
