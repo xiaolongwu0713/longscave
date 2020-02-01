@@ -4,7 +4,7 @@ from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
-
+from flask_ckeditor import CKEditor, CKEditorField
 
 class EditProfileForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
@@ -27,6 +27,10 @@ class PostForm(FlaskForm):
     post = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
+class CKPostForm(FlaskForm):
+    title = TextAreaField(_l('title label'), validators=[DataRequired()])
+    post = CKEditorField(_l('post label'), validators=[DataRequired()])
+    submit = SubmitField(_l('Submit'))
 
 class SearchForm(FlaskForm):
     q = StringField(_l('Search'), validators=[DataRequired()])

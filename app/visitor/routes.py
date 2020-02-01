@@ -11,14 +11,17 @@ from app import db, login
 from app.models import User, Post, MessageToMe
 from app.translate import translate
 from app.visitor import bp
+from app.main.forms import PostForm
 
 
 # from longscave import app
 
 
 @bp.route('/')
+@bp.route('/index')
 # @login_required
-def home():
+def index():
+    form = PostForm()
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
@@ -26,9 +29,8 @@ def home():
         if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('/visitor/visitor.html', title=_('Explore'),
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+    return render_template('/visitor/visitor.html', title=_('Explore'),form=form,
+                           posts=posts.items, next_url=next_url,prev_url=prev_url)
 
 
 @bp.route('/hireme', methods=['GET', 'POST'])

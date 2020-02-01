@@ -1,0 +1,31 @@
+<form method="post" action="{{ url_for('.index') }}">
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    <div class="form-group" style="height: 80px; width: 100%">
+        {{ form.title.label }}<br>
+        {% if form.title.errors %}
+            {% for e in form.title.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+        {{ form.title(class_='form-control') }}<br><br>
+
+        {{ form.post.label }}<br>
+        {% if form.post.errors %}
+            {% for e in form.post.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+        {{form.post}}<br><br>
+        {{ form.submit }}
+    </div>
+</form>
+
+{{ ckeditor.load(pkg_type="standard",custom_url=url_for('static', filename='ckeditor4.11/ckeditor.js')) }}
+{{ ckeditor.config(name='post') }}
+
+
+<!--
+{{ ckeditor.load(pkg_type="standard") }}
+{{ ckeditor.config(name='post',CKEDITOR_EXTRA_PLUGINS = 'eqneditor') }}
+-->
