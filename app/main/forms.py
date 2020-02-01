@@ -27,10 +27,12 @@ class PostForm(FlaskForm):
     post = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
+
 class CKPostForm(FlaskForm):
     title = TextAreaField(_l('title label'), validators=[DataRequired()])
     post = CKEditorField(_l('post label'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
+
 
 class SearchForm(FlaskForm):
     q = StringField(_l('Search'), validators=[DataRequired()])

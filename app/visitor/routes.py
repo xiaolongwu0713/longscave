@@ -11,7 +11,7 @@ from app import db, login
 from app.models import User, Post, MessageToMe
 from app.translate import translate
 from app.visitor import bp
-from app.main.forms import PostForm
+from app.main.forms import CKPostForm
 
 
 # from longscave import app
@@ -21,7 +21,7 @@ from app.main.forms import PostForm
 @bp.route('/index')
 # @login_required
 def index():
-    form = PostForm()
+    ckform = CKPostForm()
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
@@ -29,7 +29,7 @@ def index():
         if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('/visitor/visitor.html', title=_('Explore'),form=form,
+    return render_template('/visitor/visitor.html', title=_('Explore'),form=ckform,
                            posts=posts.items, next_url=next_url,prev_url=prev_url)
 
 
