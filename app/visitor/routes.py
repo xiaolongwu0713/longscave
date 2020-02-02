@@ -14,8 +14,11 @@ from app.visitor import bp
 from app.main.forms import CKarticle
 
 
-# from longscave import app
-
+@bp.route('/test', methods=['GET', 'POST'])
+def test():
+    # flash('jump to main')
+    # flash(current_user.username)
+    return render_template('/test.html')
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
@@ -35,12 +38,28 @@ def index():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.explore', page=posts.next_num) \
+    next_url = url_for('.index', page=posts.next_num) \
         if posts.has_next else None
-    prev_url = url_for('main.explore', page=posts.prev_num) \
+    prev_url = url_for('.index', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('/visitor/visitor.html', title=_('Explore'),form=ckarticle,
                            posts=posts.items, next_url=next_url,prev_url=prev_url)
+
+
+@bp.route('/articles', methods=['GET', 'POST'])
+# @login_required
+def article():
+    ckarticle = CKarticle()
+    page = request.args.get('page', 1, type=int)
+    articles = Article.query.order_by(Article.id.desc()).paginate(
+        page, current_app.config['ARTICLE_PER_PAGE'], False)
+    next_url = url_for('.article', page=articles.next_num) \
+        if articles.has_next else None
+    prev_url = url_for('.article', page=articles.prev_num) \
+        if articles.has_prev else None
+    return render_template('/visitor/articles.html', title=_('Explore'),form=ckarticle,
+                           articles=articles.items, next_url=next_url,prev_url=prev_url)
+
 
 
 @bp.route('/hireme', methods=['GET', 'POST'])

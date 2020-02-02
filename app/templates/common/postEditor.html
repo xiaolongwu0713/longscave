@@ -1,7 +1,6 @@
 <!--TODO: add MathType to ckeditor-->
 <form method="post" action="{{ url_for('.index') }}">
     {{ form.hidden_tag() }}
-    {{ form.csrf_token }}
     <div class="form-group" style="height: 80px; width: 100%">
         <p>Title:</p>
         {% if form.title.errors %}
