@@ -7,6 +7,7 @@ app = create_app()
 cli.register(app)
 Markdown(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
+app.config['CKEDITOR_FILE_UPLOADER'] = 'visitor.upload'
 
 @app.shell_context_processor
 def make_shell_context():

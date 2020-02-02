@@ -12,6 +12,28 @@ from app.models import User, Post, MessageToMe,Article
 from app.translate import translate
 from app.visitor import bp
 from app.main.forms import CKarticle
+from flask_ckeditor import upload_success, upload_fail
+
+
+@bp.route('/files/<path:filename>')
+def uploaded_files(filename):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(basedir, '../static/upload/')
+    return send_from_directory(path, filename)
+
+
+@bp.route('/upload', methods=['POST'])
+def upload():
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    print(basedir)
+    f = request.files.get('upload')
+    # Add more validations here
+    extension = f.filename.split('.')[1].lower()
+    if extension not in ['jpg', 'gif', 'png', 'jpeg']:
+        return upload_fail(message='Image only!')
+    f.save(os.path.join(basedir, '../static/upload/', f.filename))
+    url = url_for('visitor.uploaded_files', filename=f.filename)
+    return upload_success(url=url)  # return upload_success call
 
 
 @bp.route('/articleeditor', methods=['GET', 'POST'])
