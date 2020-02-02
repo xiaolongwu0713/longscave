@@ -1,0 +1,47 @@
+{% extends 'bootstrap/base.html' %}
+
+{% include '/common/head-block.html' %}
+
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+{% include '/common/flash-msg-block.html' %}
+<div class="container-fluid">
+    <div class="row">
+    <div class="col-md-8">
+        <div>
+        {% include '/common/postViewer.html' %}
+        </div>
+        {% include '/common/postEditor.html' %}
+    </div>
+     <div class="col-md-4 sidebar-bg" id="rightSideBar-1">
+         {% include '/common/rightSideBar-AboutMe.html' %}
+     </div>
+   </div>
+</div>
+{% include '/visitor/sendMeMessageModal.html' %}
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+<script>
+    $(function(){
+      $('#btnSendMeMessage').click(function(){
+        $.ajax({
+          url : '/sendMeMessageModal',
+          data : {name:$('#name').val(),location:$('#location').val(),tel:$('#tel').val(),email:$('#email').val(),msg:$('#msg').val()},
+          type : 'POST',
+          success: function(retdata){
+              if (retdata=="success") {
+              if (confirm('Save successful! You may close the popup window to reflact the change')) {
+                window.location.reload();
+                    }}
+          },
+          error: function(retdata){
+            alert(retdata);
+          }
+        });
+      });
+      });
+</script>
+
+{% endblock body %}
