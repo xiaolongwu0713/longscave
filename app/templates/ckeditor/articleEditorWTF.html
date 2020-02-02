@@ -1,0 +1,29 @@
+{% extends 'bootstrap/base.html' %}
+
+{% include '/common/head-block.html' %}
+
+{% block body %}
+
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+<!--TODO: add MathType to ckeditor-->
+{% include '/common/flash-msg-block.html' %}
+<container>
+    <div>
+    <form method="post">
+        {{ form.title() }}
+        {{ form.content() }}
+        {{ form.submit() }}
+    </form>
+    </div>
+</container>
+
+
+{{ ckeditor.load(pkg_type="standard") }}
+{{ ckeditor.config(name='content',CKEDITOR_EXTRA_PLUGINS = [ 'eqneditor' ]) }}
+
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+{% endblock body %}
