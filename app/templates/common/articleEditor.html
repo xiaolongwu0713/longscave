@@ -1,0 +1,38 @@
+{% extends 'bootstrap/base.html' %}
+
+{% include '/common/head-block.html' %}
+
+{% block body %}
+
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+<script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
+<!--TODO: add MathType to ckeditor-->
+<container>
+    <div class="warpper" style="width: 700px; margin: auto">
+        <h1>{{ title }}</h1>
+		<hr>
+		<p>{{ body|safe }}</p>
+        <hr>
+	</div>
+
+        <div>
+        <form method="post">
+            <label for="title">Title</label><br>
+			<input type="text" name="title"><br><br>
+            <label for="ckeditor">Body</label>
+            {{ ckeditor.create() }}
+            <input type="submit" value="Submit">
+        </form>
+        </div>
+</container>
+
+<!--
+{{ ckeditor.load(pkg_type="standard") }}
+{{ ckeditor.config(name='post',CKEDITOR_EXTRA_PLUGINS = 'eqneditor') }}
+-->
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+{% endblock body %}

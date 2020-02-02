@@ -14,11 +14,23 @@ from app.visitor import bp
 from app.main.forms import CKarticle
 
 
-@bp.route('/test', methods=['GET', 'POST'])
-def test():
+@bp.route('/testckeditor', methods=['GET', 'POST'])
+def testckeditor():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        body = request.form.get('ckeditor')
+        #flash(body)
+        return render_template('/common/articleEditor.html', body=body, title=title)
+    # flash(current_user.username)
+    return render_template('/common/articleEditor.html')
+
+
+@bp.route('/testckeditor4', methods=['GET', 'POST'])
+def testckeditor4():
     # flash('jump to main')
     # flash(current_user.username)
-    return render_template('/test.html')
+    return render_template('/ckeditor/testck4.html')
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
