@@ -1,6 +1,7 @@
+import os
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, g, \
-    jsonify, current_app
+    jsonify, current_app, send_from_directory
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from guess_language import guess_language
@@ -9,6 +10,9 @@ from app.main.forms import EditProfileForm, PostForm, SearchForm, MessageForm
 from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
+from flask_ckeditor import upload_success, upload_fail
+from app.main.forms import CKarticle
+
 
 
 @bp.before_app_request
@@ -45,6 +49,66 @@ def index():
     return render_template('index.html', title=_('Home'), form=form,
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
+
+
+@bp.route('/files/<path:filename>')
+def uploaded_files(filename):
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(basedir, '../static/upload/')
+    return send_from_directory(path, filename)
+
+
+@bp.route('/upload', methods=['POST'])
+def upload():
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    print(basedir)
+    f = request.files.get('upload')
+    # Add more validations here
+    extension = f.filename.split('.')[1].lower()
+    if extension not in ['jpg', 'gif', 'png', 'jpeg']:
+        return upload_fail(message='Image only!')
+    f.save(os.path.join(basedir, '../static/upload/', f.filename))
+    url = url_for('main.uploaded_files', filename=f.filename)
+    return upload_success(url=url)  # return upload_success call
+
+
+@bp.route('/articleeditor', methods=['GET', 'POST'])
+@login_required
+def articleeditor():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        body = request.form.get('ckeditor')
+        #flash(body)
+        return render_template('/ckeditor/articleEditor.html', body=body, title=title)
+    # flash(current_user.username)
+    return render_template('/ckeditor/articleEditor.html')
+
+
+@bp.route('/articleeditorWTF', methods=['GET', 'POST'])
+def articleeditorWTF():
+    ckarticle = CKarticle()
+    if ckarticle.validate_on_submit():
+        language = guess_language(ckarticle.content.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        article = Article(body=ckarticle.content.data, author=current_user, language=language,
+                          title=ckarticle.title.data)
+        db.session.add(article)
+        db.session.commit()
+        flash(_('Your article is now live!'))
+        # return json.dumps({'body': str(form.post.data), 'author': current_user,'language': language, 'title': str(form.title.data)})
+        return redirect(url_for('/ckeditor/articleEditorWTF.html'))
+    # flash(current_user.username)
+    return render_template('/ckeditor/articleEditorWTF.html', form=ckarticle)
+
+
+@bp.route('/testckeditor4', methods=['GET', 'POST'])
+def testckeditor4():
+    # flash('jump to main')
+    # flash(current_user.username)
+    return render_template('/ckeditor/testck4.html')
+
+
 
 
 @bp.route('/explore')
