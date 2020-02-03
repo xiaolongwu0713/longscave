@@ -7,6 +7,16 @@ nav.navbar a.nav-link {
     font-size: 0.9em !important;
     padding-left: 10px !important;
 }
+
+.navbar-default {
+background-color: #70d4a199
+}
+/* tighten navbar item */
+.navbar li a {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
 /* format Hire Me */
 #hireme .post .post_body p {
     font-size: 200%;
@@ -31,3 +41,4 @@ opacity:4;
 top: 30%;
 position: relative;
 }
+
