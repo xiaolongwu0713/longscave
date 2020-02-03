@@ -1,29 +1,24 @@
-{% extends 'bootstrap/base.html' %}
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% include '/common/head-block.html' %}
-
-{% block body %}
-
-<!-- navbar-->
-{% include '/common/navbar-block-visitor.html' %}
-<!--TODO: add MathType to ckeditor-->
-{% include '/common/flash-msg-block.html' %}
-<container>
+{% block app_content %}
+    <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
+    {% include '/common/flash-msg-block.html' %}
+<container-fluid>
     <div>
     <form method="post">
-        {{ form.title() }}
+        <p>Title: {{ form.title() }}</p>
         {{ form.content() }}
         {{ form.submit() }}
     </form>
     </div>
-</container>
-
+</container-fluid>
 
 {{ ckeditor.load(pkg_type="standard") }}
-{{ ckeditor.config(name='content',CKEDITOR_EXTRA_PLUGINS = [ 'eqneditor' ]) }}
+{{ ckeditor.config(name='content') }}
 
 
 {% include 'common/footer.html' %}
 <!-- JavaScript files-->
 {% include 'common/js-block.html' %}
-{% endblock body %}
+{% endblock %}

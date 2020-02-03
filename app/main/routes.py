@@ -115,8 +115,6 @@ def testckeditor4():
     return render_template('/ckeditor/testck4.html')
 
 
-
-
 @bp.route('/explore')
 @login_required
 def explore():
@@ -129,6 +127,21 @@ def explore():
         if posts.has_prev else None
     return render_template('index.html', title=_('Explore'),
                            posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
+
+
+@bp.route('/myArticles')
+@login_required
+def myArticles():
+    page = request.args.get('page', 1, type=int)
+    articles = Article.query.order_by(Article.timestamp.desc()).paginate(
+        page, current_app.config['ARTICLES_PER_PAGE'], False)
+    next_url = url_for('main.myArticles', page=articles.next_num) \
+        if articles.has_next else None
+    prev_url = url_for('main.myArticles', page=articles.prev_num) \
+        if articles.has_prev else None
+    return render_template('/main/myarticles.html', title=_('View my articles'),
+                           articles=articles.items, next_url=next_url,
                            prev_url=prev_url)
 
 
