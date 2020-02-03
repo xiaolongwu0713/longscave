@@ -7,7 +7,7 @@ from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db
 from app.main.forms import EditProfileForm, PostForm, SearchForm, MessageForm
-from app.models import User, Post, Message, Notification
+from app.models import User, Post, Message, Notification, Article
 from app.translate import translate
 from app.main import bp
 from flask_ckeditor import upload_success, upload_fail
@@ -78,6 +78,13 @@ def articleeditor():
     if request.method == 'POST':
         title = request.form.get('title')
         body = request.form.get('ckeditor')
+        language = guess_language(body)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        article = Article(body=body, author=current_user, language=language,title=title)
+        db.session.add(article)
+        db.session.commit()
+        flash(_('Your article is now live!'))
         #flash(body)
         return render_template('/ckeditor/articleEditor.html', body=body, title=title)
     # flash(current_user.username)
@@ -91,8 +98,7 @@ def articleeditorWTF():
         language = guess_language(ckarticle.content.data)
         if language == 'UNKNOWN' or len(language) > 5:
             language = ''
-        article = Article(body=ckarticle.content.data, author=current_user, language=language,
-                          title=ckarticle.title.data)
+        article = Article(body=ckarticle.content.data, author=current_user, language=language,title=ckarticle.title.data)
         db.session.add(article)
         db.session.commit()
         flash(_('Your article is now live!'))
