@@ -131,7 +131,6 @@ def explore():
 
 
 @bp.route('/myArticles')
-@login_required
 def myArticles():
     page = request.args.get('page', 1, type=int)
     articles = Article.query.order_by(Article.timestamp.desc()).paginate(

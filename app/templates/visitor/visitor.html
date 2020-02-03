@@ -6,15 +6,30 @@
 <!-- navbar-->
 {% include '/common/navbar-block-visitor.html' %}
 {% include '/common/flash-msg-block.html' %}
-<div class="container-fluid">
+<div class="container">
     <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-10">
         <div>
-        {% include '/common/postViewer.html' %}
+        {% for article in articles %}
+        {% include '/main/singleArticle.html' %}
+        {% endfor %}
+        <nav aria-label="...">
+            <ul class="pager">
+                <li class="previous{% if not prev_url %} disabled{% endif %}">
+                    <a href="{{ prev_url or '#' }}">
+                        <span aria-hidden="true">&larr;</span> {{ _('Newer articles') }}
+                    </a>
+                </li>
+                <li class="next{% if not next_url %} disabled{% endif %}">
+                    <a href="{{ next_url or '#' }}">
+                        {{ _('Older articles') }} <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
         </div>
-
     </div>
-     <div class="col-md-4 sidebar-bg" id="rightSideBar-1">
+     <div class="col-md-2 sidebar-bg" id="rightSideBar-1">
          {% include '/common/rightSideBar-AboutMe.html' %}
      </div>
    </div>

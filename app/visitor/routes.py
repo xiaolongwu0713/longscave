@@ -14,31 +14,19 @@ from app.visitor import bp
 from app.main.forms import CKarticle
 
 
-
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 # @login_required
 def index():
-    ckarticle = CKarticle()
-    if ckarticle.validate_on_submit():
-        language = guess_language(ckarticle.content.data)
-        if language == 'UNKNOWN' or len(language) > 5:
-            language = ''
-        article = Article(body=ckarticle.content.data, author=current_user, language=language, title=ckarticle.title.data)
-        db.session.add(article)
-        db.session.commit()
-        flash(_('Your article is now live!'))
-        # return json.dumps({'body': str(form.post.data), 'author': current_user,'language': language, 'title': str(form.title.data)})
-        return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('.index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('.index', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('/visitor/visitor.html', title=_('Explore'),form=ckarticle,
-                           posts=posts.items, next_url=next_url,prev_url=prev_url)
+    articles = Article.query.filter(Article.id != 3).order_by(Article.timestamp.desc()).paginate(
+        page, current_app.config['ARTICLES_PER_PAGE'], False)
+    next_url = url_for('.index', page=articles.next_num) \
+        if articles.has_next else None
+    prev_url = url_for('.index', page=articles.prev_num) \
+        if articles.has_prev else None
+    return render_template('/visitor/visitor.html', title=_('Explore'),
+                           articles=articles.items, next_url=next_url,prev_url=prev_url)
 
 
 @bp.route('/articles', methods=['GET', 'POST'])

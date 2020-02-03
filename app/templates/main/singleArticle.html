@@ -1,30 +1,31 @@
-    <table class="table table-hover">
-        <tr>
-            <td width="70px">
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('main.user', username=article.author.username) }}">
+                <img src="{{ article.author.avatar(70) }}" />
+            </a>
+        </td>
+        <td>
+            {% set user_link %}
                 <a href="{{ url_for('main.user', username=article.author.username) }}">
-                    <img src="{{ article.author.avatar(70) }}" />
+                    {{ article.author.username }}
                 </a>
-            </td>
-            <td>
-                {% set user_link %}
-                    <a href="{{ url_for('main.user', username=article.author.username) }}">
-                        {{ article.author.username }}
-                    </a>
-                {% endset %}
-                {{ _('%(username)s said %(when)s',
-                    username=user_link, when=moment(article.timestamp).fromNow()) }}
-                <br>
-                <span id="article{{ article.id }}">{{article.body|markdown|safe}}</span>
-                {% if article.language and article.language != g.locale %}
-                <br><br>
-                <span id="translation{{ article.id }}">
-                    <a href="javascript:translate(
-                                '#article{{ article.id }}',
-                                '#translation{{ article.id }}',
-                                '{{ article.language }}',
-                                '{{ g.locale }}');">{{ _('Translate') }}</a>
-                </span>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
+            {% endset %}
+            {{ _('%(username)s  %(when)s',
+                username=user_link, when=moment(article.timestamp).fromNow()) }}
+            <h3>Article Title: {{ article.title }}</h3><p>ID:{{ article.id }}</p>
+            <br>
+            <span id="article{{ article.id }}">{{article.body|markdown|safe}}</span>
+            {% if article.language and article.language != g.locale %}
+            <br><br>
+            <span id="translation{{ article.id }}">
+                <a href="javascript:translate(
+                            '#article{{ article.id }}',
+                            '#translation{{ article.id }}',
+                            '{{ article.language }}',
+                            '{{ g.locale }}');">{{ _('Translate') }}</a>
+            </span>
+            {% endif %}
+        </td>
+    </tr>
+</table>
