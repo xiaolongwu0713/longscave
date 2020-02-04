@@ -1,11 +1,7 @@
-{% extends 'bootstrap/base.html' %}
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% include '/common/head-block.html' %}
-
-{% block body %}
-
-<!-- navbar-->
-{% include '/common/navbar-block-visitor.html' %}
+{% block app_content %}
 <script src="/static/ckeditor4withmath/ckeditor.js"></script>
 <container>
     <div class="warpper" style="width: 700px; margin: auto">
@@ -34,4 +30,4 @@
 {% include 'common/footer.html' %}
 <!-- JavaScript files-->
 {% include 'common/js-block.html' %}
-{% endblock body %}
+{% endblock app_content %}

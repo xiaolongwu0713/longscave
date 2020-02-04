@@ -4,7 +4,6 @@
 {% block app_content %}
     <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
     {% include '/common/flash-msg-block.html' %}
-
 <container-fluid>
     <div>
     <form method="post">
@@ -14,11 +13,12 @@
     </form>
     </div>
 </container-fluid>
-{{ ckeditor.load(custom_url=url_for('static', filename='ckeditor4withmath/ckeditor.js')) }}
-{{ ckeditor.config(name='content') }}
 
+{{ ckeditor.load(pkg_type="standard") }}
+{{ ckeditor.config(name='content') }}
+{{ ckeditor.config() }}
 
 {% include 'common/footer.html' %}
 <!-- JavaScript files-->
-    {% include 'common/js-block.html' %}
+{% include 'common/js-block.html' %}
 {% endblock %}

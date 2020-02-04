@@ -86,7 +86,7 @@ def articleeditor():
         db.session.commit()
         flash(_('Your article is now live!'))
         #flash(body)
-        return render_template('/ckeditor/articleEditor.html', body=body, title=title)
+        return render_template('/ckeditor/justPostedArticle.html', body=body, title=title)
     # flash(current_user.username)
     return render_template('/ckeditor/articleEditor.html')
 
@@ -103,7 +103,7 @@ def articleeditorWTF():
         db.session.commit()
         flash(_('Your article is now live!'))
         # return json.dumps({'body': str(form.post.data), 'author': current_user,'language': language, 'title': str(form.title.data)})
-        return redirect(url_for('/ckeditor/articleEditorWTF.html'))
+        return redirect(url_for('main.articleditorWTF'))
     # flash(current_user.username)
     return render_template('/ckeditor/articleEditorWTF.html', form=ckarticle)
 
