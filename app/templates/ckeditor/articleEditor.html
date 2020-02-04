@@ -4,22 +4,15 @@
 {% block app_content %}
 <script src="/static/ckeditor4withmath/ckeditor.js"></script>
 <container>
-    <div class="warpper" style="width: 700px; margin: auto">
-        <h1>{{ title }}</h1>
-		<hr>
-		<p>{{ body|safe }}</p>
-        <hr>
-	</div>
-
-        <div>
-        <form method="post">
-            <label for="title">Title</label><br>
-			<input type="text" name="title"><br><br>
-            <label for="ckeditor">Body</label>
-            {{ ckeditor.create() }}
-            <input type="submit" value="Submit">
-        </form>
-        </div>
+    <div>
+    <form method="post">
+        <label for="title">Title</label><br>
+        <input type="text" name="title"><br><br>
+        <label for="ckeditor">Body</label>
+        {{ ckeditor.create() }}
+        <input type="submit" value="Submit">
+    </form>
+    </div>
 </container>
 {{ ckeditor.config() }}
 <!--
