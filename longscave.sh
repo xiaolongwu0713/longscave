@@ -5,7 +5,7 @@ setenforce 0
 # usage: longscave.sh start/stop/erase
 # usage: longscave.sh deploy openssl/certbot (default is openssl)
 
-if [ $# == 0 ];then # $#: parameter number
+if [[ $# == 0 ]] || [[ $# > 2 ]];then # $#: parameter number
 echo "usage:
     To deploy: $0 deploy openssl/certbot
     To start/stop/erase: $0 start/stop/erase"
@@ -13,6 +13,14 @@ exit 1
 fi
 
 # start/stop/erase web app
+# start/stop/erase web app
+if [[ $# == 1 ]] && ([[ $1 != "start" ]]  || [[ $1 != "stop" ]] || [[ $1 != "erase" ]]);then
+echo "usage:
+    To deploy: $0 deploy openssl/certbot
+    To start/stop/erase: $0 start/stop/erase"
+exit 1
+fi
+
 if [[ $# == 1 ]] && [[ $1 == "start" ]];then
   echo "start supervisord"
   /usr/python/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
@@ -124,6 +132,10 @@ if [ $pyversion == 2 ];then
 	echo "python version 2.7"
 	echo "installing python 3.6"
 	yum -y install wget  sqlite-devel zlib-devel xml *openssl*   openssl*  gcc  libffi-dev
+	if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	fi
 	cd /tmp
 	if [ ! -d "/tmp/python3.6" ];then
 		mkdir python3.6
@@ -131,10 +143,18 @@ if [ $pyversion == 2 ];then
 	cd /tmp/python3.6
 	rm -rf Python-3.6.4.tgz*
 	wget https://www.python.org/ftp/python/3.6.4/Python-3.6.4.tgz
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 	tar -zxvf Python-3.6.4.tgz
 	cd Python-3.6.4
 	./configure --prefix=/usr/python --enable-loadable-sqlite-extensions --enable-optimizations --with-ssl
 	make && make install
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	 fi
 	echo "installation done"
 fi
 
@@ -171,13 +191,25 @@ if [ ! -d "/home/xiaowu/longscave/app" ];then
 	yum -y install git
 	cd /home/xiaowu
 	git clone https://github.com/xiaolongwu1987/longscave.git
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 	#mv microblog longscave
 	cd longscave
 	source /usr/python/venv/longscave/bin/activate
 	echo "pip install requirements"
 	pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 	echo "pip install pymysql gunicorn"
 	pip install pymysql gunicorn
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 	chown xiaowu:xiaowu -R /home/xiaowu/longscave
 else
 	echo "git repository longscave exists"
@@ -190,10 +222,22 @@ pip freeze | grep guess-language
 if [ $? == 1 ];then
 echo "install guess_language"
 yum install -y wget
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 yum install -y bzip2
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 mkdir /tmp/guess_languagetmp/
 cd /tmp/guess_languagetmp
 wget https://files.pythonhosted.org/packages/8b/4f/9ed0280b24e9e6875c3870a97659d0106a14e36db0d7d65c5277066fc7d0/guess_language-spirit-0.5.3.tar.bz2
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 tar -jxvf guess_language-spirit-0.5.3.tar.bz2
 source /usr/python/venv/longscave/bin/activate
 cd /tmp/guess_languagetmp/guess_language-spirit-0.5.3
@@ -214,6 +258,10 @@ cd /tmp
 mkdir supervisortmp
 cd /tmp/supervisortmp
 git clone https://github.com/Supervisor/supervisor.git
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 fi
 if [ ! -f "/usr/python/venv/longscave/bin/supervisord" ];then
 cd /tmp/supervisortmp/supervisor
@@ -263,6 +311,10 @@ if [ $? == 1 ];then
 	echo "installing nginx"
 	yum localinstall -y  /home/xiaowu/longscave/packages/nginx-release-centos-7-0.el7.ngx.noarch.rpm
 	yum install -y nginx
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 	systemctl start nginx
         mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
         cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
@@ -280,6 +332,10 @@ if [ $1 == "openssl" ];then
 	nginx -s reload
 elif [ $1 == "certbot" ];then
 	yum install -y certbot python2-certbot-nginx
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 	chmod a+xr /home/xiaowu
 	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /home/xiaowu/longscave/cert -d longscave.top,www.longscave.top
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
@@ -294,27 +350,35 @@ yum localinstall -y /home/xiaowu/longscave/packages/mysql80-community-release-el
 yum clean all
 yum makecache
 yum --disablerepo=mysql80-community --enablerepo=mysql57-community install -y mysql-community-server
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
 fi
 
 service mysqld start
 mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "select count(*) from longscave.user"
 if [ $? == 1 ];then
-echo "initiate mysql database"
-temppass=`grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log |tail -1 | awk -F'localhost' '{print $2}' | awk -F ' ' '{print $2}'`
-echo "temporary password generated:" $temppass
-mysql --connect-expired-password  -hlocalhost -P3306 -uroot -p$temppass -e "alter user 'root'@'localhost' identified by '0okm(IJN890-'"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "uninstall plugin validate_password"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "alter user 'root'@'localhost' identified by 'xiaowu'"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create database longscave character set utf8 collate utf8_bin"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create user 'longscave'@'localhost' identified by 'xiaowu'"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "grant all privileges on longscave.* to 'longscave'@'localhost'"
-mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
-# database migration
-echo "flask db upgrade"
-cd /home/xiaowu/longscave
-source /usr/python/venv/longscave/bin/activate
-flask db upgrade
+  echo "initiate mysql database"
+  temppass=`grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log |tail -1 | awk -F'localhost' '{print $2}' | awk -F ' ' '{print $2}'`
+  echo "temporary password generated:" $temppass
+  mysql --connect-expired-password  -hlocalhost -P3306 -uroot -p$temppass -e "alter user 'root'@'localhost' identified by '0okm(IJN890-'"
+  	if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "uninstall plugin validate_password"
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "alter user 'root'@'localhost' identified by 'xiaowu'"
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create database longscave character set utf8 collate utf8_bin"
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create user 'longscave'@'localhost' identified by 'xiaowu'"
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "grant all privileges on longscave.* to 'longscave'@'localhost'"
+  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
+  # database migration
+  echo "flask db upgrade"
+  cd /home/xiaowu/longscave
+  source /usr/python/venv/longscave/bin/activate
+  flask db upgrade
 fi
 #open https:ip to verify the result.
 
