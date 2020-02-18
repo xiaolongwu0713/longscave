@@ -1,18 +1,110 @@
 #/bin/bash
-exec 1>>/tmp/deploy.log
-exec 2>>/tmp/deploy.log
+exec 1>>/tmp/longscave.log
+exec 2>>/tmp/longscave.log
 setenforce 0
-# usage: deploy.sh openssl|certbot
+# usage: longscave.sh start/stop/erase
+# usage: longscave.sh deploy openssl/certbot (default is openssl)
 
-if [ $# != 1 ];then
-echo "usage: $0 openssl/certbot"
-echo "specify ssl method in command"
+if [ $# == 0 ];then # $#: parameter number
+echo "usage:
+    To deploy: $0 deploy openssl/certbot
+    To start/stop/erase: $0 start/stop/erase"
 exit 1
 fi
 
+# start/stop/erase web app
+if [[ $# == 1 ]] && [[ $1 == "start" ]];then
+  echo "start supervisord"
+  /usr/python/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
+  /usr/python/venv/longscave/bin/supervisorctl reload
+  echo "start longscave web app"
+  /usr/python/venv/longscave/bin/supervisorctl start longscave
+    echo "verifying......"
+    netstat -tnpl | grep 8000
+    if [ $? == 1 ]; then
+      echo "starting longscave web app"
+      /usr/python/venv/longscave/bin/supervisorctl reload
+      /usr/python/venv/longscave/bin/supervisorctl start longscave
+      netstat -ntpl | grep 8000
+        if [ $? == 0 ];then
+          echo "web app started successfully"
+        fi
+    fi
+    echo "Already running"
+    echo "start nginx"
+    systemctl start nginx
+    echo "start mysql"
+    service mysqld start
+fi
+
+if [[ $# == 1 ]] && [[ $1 == "stop" ]];then
+  # stop web app
+  echo "stop longscave web app"
+  /usr/python/venv/longscave/bin/supervisorctl stop longscave
+  # stop supervisord
+  echo "stop supervisord deamon"
+  ps -elf | grep supervisord | grep -v 'grep' | awk '{print $4}'
+  netstat -ntpl | grep 8000
+  if [ $? == 1 ];then
+    echo "web app stopped successfully"
+  fi
+  echo "stop mysqld"
+  systemctl stop mysqld
+fi
+
+if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
+  # delete user 'xiaowu'
+  echo "keep user xiaowu"
+
+  # keep python3
+  echo "keep python3"
+
+  # keep python virtualenv at /usr/pyhon/venv/longscave
+  echo "keep python virtualenv"
+
+  # keep folder created under /tmp
+  echo "keep temp contents under /tmp"
+
+  # use nginx default configuration
+  echo "use default nginx configuration"
+  rm -f /etc/nginx/nginx.conf
+  mv /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
+  rm -f /etc/nginx/conf.d/*
+  nginx -s reload
+
+  # stop web app
+  echo "stop longscave web app"
+  /usr/python/venv/longscave/bin/supervisorctl stop longscave
+  # stop supervisord
+  echo "stop supervisord deamon"
+  ps -elf | grep supervisord | grep -v 'grep' | awk '{print $4}'
+  netstat -ntpl | grep 8000
+  if [ $? == 1 ];then
+    echo "web app stopped successfully"
+  fi
+
+  # erase mysql repo, but keep mysql package
+  echo "uninstall mysql repo"
+  rpm -aq | grep mysql | grep noarch | xargs yum erase -y
+  echo "keep mysql package"
+
+  # clean up mysql data
+  echo "keep mysql data"
+  #systemctl start mysqld
+  #mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "select count(*) from longscave.user"
+
+  echo "stop mysqld"
+  systemctl stop mysqld
+
+fi
+
+
+# deploy web app using openssl/certbot
+if [[ $# == 2 ]] && [[ $1 == "deploy" ]];then
+
 # ssl method
 myssl=openssl
-myssl=$1
+myssl=$2
 echo "encryption method: $myssl"
 ## add user
 id -u xiaowu
@@ -205,6 +297,9 @@ yum --disablerepo=mysql80-community --enablerepo=mysql57-community install -y my
 fi
 
 service mysqld start
+mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "select count(*) from longscave.user"
+if [ $? == 1 ];then
+echo "initiate mysql database"
 temppass=`grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log |tail -1 | awk -F'localhost' '{print $2}' | awk -F ' ' '{print $2}'`
 echo "temporary password generated:" $temppass
 mysql --connect-expired-password  -hlocalhost -P3306 -uroot -p$temppass -e "alter user 'root'@'localhost' identified by '0okm(IJN890-'"
@@ -215,6 +310,12 @@ mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create
 mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create user 'longscave'@'localhost' identified by 'xiaowu'"
 mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "grant all privileges on longscave.* to 'longscave'@'localhost'"
 mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
-
+# database migration
+echo "flask db upgrade"
+cd /home/xiaowu/longscave
+source /usr/python/venv/longscave/bin/activate
+flask db upgrade
+fi
 #open https:ip to verify the result.
 
+fi
