@@ -332,12 +332,11 @@ if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
 	  fi
-	mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
-  mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
-  cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
-	systemctl start nginx
 fi
-
+mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
+systemctl start nginx
 
 # ssl configuration
 #openssl dhparam -out /home/xiaowu/longscave/cert/dhparam.pem 2048
