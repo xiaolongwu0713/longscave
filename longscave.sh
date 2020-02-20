@@ -76,9 +76,16 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
   # use nginx default configuration
   echo "use default nginx configuration"
   rm -f /etc/nginx/nginx.conf
+  rm -f /etc/nginx/conf.d/letencrypt.conf
+  rm -f /etc/nginx/conf.d/openssl.conf
   mv /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
-  rm -f /etc/nginx/conf.d/*
-  nginx -s reload
+  mv /etc/nginx/conf.d/default.conf.bak /etc/nginx/conf.d/default.conf
+
+  systemctl stop nginx
+  systemctl start nginx
+
+  # delete letencryption output
+  rm -rf /etc/letsencrypt/live/longscave.top/*
 
   # stop web app
   echo "stop longscave web app"
@@ -254,7 +261,7 @@ if [ ! -d "/etc/supervisor/conf.d" ];then
 mkdir /etc/supervisor
 mkdir /etc/supervisor/conf.d
 fi
-if [ ! -d "/tmp/supervisortmp" ];then
+if [ ! -f "/tmp/supervisortmp/supervisor/setup.py" ];then
 echo "install supervisor from source"
 cd /tmp || exit
 mkdir supervisortmp
@@ -269,13 +276,13 @@ if [ ! -f "/usr/python/venv/longscave/bin/supervisord" ];then
 cd /tmp/supervisortmp/supervisor || exit
 python setup.py install
 fi
+
 if [ ! -f "/etc/supervisor/conf.d/longscave.ini" ];then
 /usr/python/venv/longscave/bin/echo_supervisord_conf > /etc/supervisor/supervisord.conf
 cat>>/etc/supervisor/supervisord.conf<<EOF
 [include]
 files = /etc/supervisor/conf.d/*.ini
 EOF
-
 touch /etc/supervisor/conf.d/longscave.ini
 cat>>/etc/supervisor/conf.d/longscave.ini<<EOF
 [program:longscave]
