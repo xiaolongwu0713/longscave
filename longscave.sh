@@ -108,7 +108,9 @@ fi
 
 
 # deploy web app using openssl/certbot
-if [[ $# == 2 ]] && [[ $1 == "deploy" ]];then
+if [[ $# == 2 ]] && [[ $1 != "deploy" ]];then
+  echo "usage: longscave.sh deploy openssl/certbot"
+elif [[ $# == 2 ]] && [[ $1 == "deploy" ]];then
 myssl=$2
 if [[ $myssl == "openssl" ]] || [[ $myssl == "certbot" ]];then
   echo "encryption method: $myssl"
