@@ -228,11 +228,6 @@ source /usr/python/venv/longscave/bin/activate
 pip freeze | grep guess-language
 if [ $? == 1 ];then
 echo "install guess_language"
-yum install -y wget
-		if [ $? == 1 ];then
-	  echo "failed, exit now"
-	  exit 1
-	  fi
 yum install -y bzip2
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
