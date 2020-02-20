@@ -326,9 +326,9 @@ fi
 
 # ssl configuration
 #openssl dhparam -out /home/xiaowu/longscave/cert/dhparam.pem 2048
+mkdir /tmp/cert
+rm -f /tmp/cert/*
 if [ $myssl == "openssl" ];then
-	mkdir /tmp/cert
-	rm -f /tmp/cert/*
 	printf 'CN\nshanghai\nSH\nLong\nLong\nlongscave\nxiaolongwu1987@sin.com\n' | openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout /tmp/cert/key.pem -out /tmp/cert/cert.pem
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
 	nginx -s reload
@@ -339,7 +339,7 @@ elif [ $myssl == "certbot" ];then
 	  exit 1
 	  fi
 	chmod a+xr /home/xiaowu
-	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /home/xiaowu/longscave/cert -d longscave.top,www.longscave.top
+	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
 	nginx -s reload
 fi	
