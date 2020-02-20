@@ -102,7 +102,7 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
 
   # erase mysql repo, but keep mysql package
   echo "uninstall mysql repo"
-  rpm -aq | grep mysql | grep noarch | xargs yum erase -y
+  rpm -aq | grep mysql | grep noarch | xargs yum erase -y -q
   echo "keep mysql package"
 
   # clean up mysql data
@@ -147,7 +147,7 @@ pyversion=`echo $pyv | awk -F'.' '{print $1}' | awk -F ' ' '{print $2}'`
 if [ $pyversion == 2 ];then
 	echo "python version 2.7"
 	echo "installing python 3.6"
-	yum -y install wget  sqlite-devel zlib-devel xml *openssl*   openssl*  gcc  libffi-dev
+	yum -y -q install wget  sqlite-devel zlib-devel xml *openssl*   openssl*  gcc  libffi-dev
 	if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
@@ -180,12 +180,18 @@ if [ $pyversion == 2 ];then
 	mv /usr/bin/pip /usr/bin/pip.bak
 	ln -s /usr/python/bin/python3 /usr/bin/python
 	ln -s /usr/python/bin/pip3 /usr/bin/pip
-	sed -l 1 -i "s/python/python.bak/g" /usr/bin/yum
-	sed -l 1 -i "s/python/python.bak/g" /usr/libexec/urlgrabber-ext-down
+	grep python.bak /usr/bin/yum
+	if [ $?  == 1 ];then
+	  sed -l 1 -i "s/python/python.bak/g" /usr/bin/yum
+	fi
+	grep python.bak /usr/libexec/urlgrabber-ext-down
+	if [ $?  == 1 ];then
+	  sed -l 1 -i "s/python/python.bak/g" /usr/libexec/urlgrabber-ext-down
+	fi
 fi
 
-if [ $pyversion == 2 ];then
-	echo "Python version 3"
+if [ $pyversion == 3 ];then
+	echo "Already have Python version 3"
 fi
 
 
@@ -204,7 +210,7 @@ fi
 if [ ! -d "/home/xiaowu/longscave/app" ];then
 	## get git repo
 	echo "git clone longscave from GitHub"
-	yum -y install git
+	yum -y -q install git
 	cd /home/xiaowu || exit
 	git clone https://github.com/xiaolongwu1987/longscave.git
 		if [ $? == 1 ];then
@@ -237,7 +243,7 @@ source /usr/python/venv/longscave/bin/activate
 pip freeze | grep guess-language
 if [ $? == 1 ];then
 echo "install guess_language"
-yum install -y bzip2
+yum install -y -q bzip2
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
@@ -301,7 +307,7 @@ echo "start supervisord"
 /usr/python/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
 
 
-yum -y install net-tools
+yum -y -q install net-tools
 netstat -tnpl | grep 8000
 if [ $? == 1 ]; then
 	echo "starting longscave web app"
@@ -320,8 +326,8 @@ fi
 rpm -qa | grep nginx | grep -v noarch
 if [ $? == 1 ];then
 	echo "installing nginx"
-	yum localinstall -y  /home/xiaowu/longscave/packages/nginx-release-centos-7-0.el7.ngx.noarch.rpm
-	yum install -y nginx
+	yum localinstall -y -q /home/xiaowu/longscave/packages/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+	yum install -y -q nginx
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
@@ -342,7 +348,7 @@ if [ $myssl == "openssl" ];then
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
 	nginx -s reload
 elif [ $myssl == "certbot" ];then
-	yum install -y certbot python2-certbot-nginx
+	yum install -y -q certbot python2-certbot-nginx
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
@@ -357,10 +363,10 @@ fi
 rpm -qa | grep mysql-community-server-5
 if [ $? == 1 ];then
 echo "installing mysql 5.7"
-yum localinstall -y /home/xiaowu/longscave/packages/mysql80-community-release-el7-3.noarch.rpm 
+yum localinstall -y -q /home/xiaowu/longscave/packages/mysql80-community-release-el7-3.noarch.rpm
 yum clean all
 yum makecache
-yum --disablerepo=mysql80-community --enablerepo=mysql57-community install -y mysql-community-server
+yum --disablerepo=mysql80-community --enablerepo=mysql57-community install -y -q mysql-community-server
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
