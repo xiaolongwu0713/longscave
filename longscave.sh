@@ -339,6 +339,7 @@ elif [ $myssl == "certbot" ];then
 	  exit 1
 	  fi
 	chmod a+xr /home/xiaowu
+	mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
 	nginx -s reload
