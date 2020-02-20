@@ -338,6 +338,7 @@ fi
 mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
+systemctl stop nginx
 systemctl start nginx
 
 # ssl configuration
