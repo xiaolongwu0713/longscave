@@ -109,11 +109,13 @@ fi
 
 # deploy web app using openssl/certbot
 if [[ $# == 2 ]] && [[ $1 == "deploy" ]];then
-
-# ssl method
-myssl=openssl
 myssl=$2
-echo "encryption method: $myssl"
+if [[ $myssl == "openssl" ]] || [[ $myssl == "certbot" ]];then
+  echo "encryption method: $myssl"
+else
+  echo "encryption should be eigth openssl or certbot"
+fi
+
 ## add user
 id -u xiaowu
 if [ $? == 1 ];then
@@ -122,6 +124,7 @@ echo "xiaowu" | passwd -f xiaowu --stdin
 else
 echo "user exists"
 fi
+chmod a+xr /home/xiaowu
 
 
 ## python installatin
@@ -324,13 +327,13 @@ fi
 
 # ssl configuration
 #openssl dhparam -out /home/xiaowu/longscave/cert/dhparam.pem 2048
-if [ $1 == "openssl" ];then
+if [ $myssl == "openssl" ];then
 	mkdir /tmp/cert
 	rm -f /tmp/cert/*
 	printf 'CN\nshanghai\nSH\nLong\nLong\nlongscave\nxiaolongwu1987@sin.com\n' | openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout /tmp/cert/key.pem -out /tmp/cert/cert.pem
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
 	nginx -s reload
-elif [ $1 == "certbot" ];then
+elif [ $myssl == "certbot" ];then
 	yum install -y certbot python2-certbot-nginx
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
