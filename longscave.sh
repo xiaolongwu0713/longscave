@@ -14,13 +14,15 @@ fi
 
 # start/stop/erase web app
 # start/stop/erase web app
-if [[ $# == 1 ]] && ([[ $1 == "start" ]]  || [[ $1 == "stop" ]] || [[ $1 == "erase" ]]);then
-  echo start to "$1"
-else
-echo "usage:
-    To deploy: $0 deploy openssl/certbot
-    To start/stop/erase: $0 start/stop/erase"
-exit 1
+if [[ $# == 1 ]];then
+  if [[ $1 == "start" ]]  || [[ $1 == "stop" ]] || [[ $1 == "erase" ]];then
+  echo "$1" longscave
+  else
+  echo "usage:
+      To deploy: $0 deploy openssl/certbot
+      To start/stop/erase: $0 start/stop/erase"
+  exit 1
+  fi
 fi
 
 if [[ $# == 1 ]] && [[ $1 == "start" ]];then
