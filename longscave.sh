@@ -167,16 +167,16 @@ if [ $pyversion == 2 ];then
 	  fi
 	tar -zxvf Python-3.6.4.tgz
 	cd Python-3.6.4 || exit
+	# TODO: quite configure
 	./configure --prefix=/usr/python --enable-loadable-sqlite-extensions --enable-optimizations --with-ssl
+	# TODO: quite make and install
 	make && make install
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
 	 fi
 	echo "installation done"
-fi
 
-if [ $pyversion == 2 ];then
 	echo "creating soft link"
 	mv /usr/bin/python /usr/bin/python.bak
 	mv /usr/bin/pip /usr/bin/pip.bak
