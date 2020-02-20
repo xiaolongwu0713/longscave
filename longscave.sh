@@ -1,11 +1,11 @@
-#/bin/bash
+#！/bin/bash
 exec 1>>/tmp/longscave.log
 exec 2>>/tmp/longscave.log
 setenforce 0
 # usage: longscave.sh start/stop/erase
 # usage: longscave.sh deploy openssl/certbot (default is openssl)
 
-if [[ $# == 0 ]] || [[ $# > 2 ]];then # $#: parameter number
+if [[ $# == 0 ]] || [[ $# -gt 2 ]];then # $#: parameter number
 echo "usage:
     To deploy: $0 deploy openssl/certbot
     To start/stop/erase: $0 start/stop/erase"
@@ -136,11 +136,11 @@ if [ $pyversion == 2 ];then
 	  echo "failed, exit now"
 	  exit 1
 	fi
-	cd /tmp
+	cd /tmp || exit
 	if [ ! -d "/tmp/python3.6" ];then
 		mkdir python3.6
 	fi
-	cd /tmp/python3.6
+	cd /tmp/python3.6 || exit
 	rm -rf Python-3.6.4.tgz*
 	wget https://www.python.org/ftp/python/3.6.4/Python-3.6.4.tgz
 		if [ $? == 1 ];then
@@ -148,7 +148,7 @@ if [ $pyversion == 2 ];then
 	  exit 1
 	  fi
 	tar -zxvf Python-3.6.4.tgz
-	cd Python-3.6.4
+	cd Python-3.6.4 || exit
 	./configure --prefix=/usr/python --enable-loadable-sqlite-extensions --enable-optimizations --with-ssl
 	make && make install
 		if [ $? == 1 ];then
@@ -189,14 +189,14 @@ if [ ! -d "/home/xiaowu/longscave/app" ];then
 	## get git repo
 	echo "git clone longscave from GitHub"
 	yum -y install git
-	cd /home/xiaowu
+	cd /home/xiaowu || exit
 	git clone https://github.com/xiaolongwu1987/longscave.git
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
 	  fi
 	#mv microblog longscave
-	cd longscave
+	cd longscave || exit
 	source /usr/python/venv/longscave/bin/activate
 	echo "pip install requirements"
 	pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
@@ -232,7 +232,7 @@ yum install -y bzip2
 	  exit 1
 	  fi
 mkdir /tmp/guess_languagetmp/
-cd /tmp/guess_languagetmp
+cd /tmp/guess_languagetmp || exit
 wget https://files.pythonhosted.org/packages/8b/4f/9ed0280b24e9e6875c3870a97659d0106a14e36db0d7d65c5277066fc7d0/guess_language-spirit-0.5.3.tar.bz2
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
@@ -240,7 +240,7 @@ wget https://files.pythonhosted.org/packages/8b/4f/9ed0280b24e9e6875c3870a97659d
 	  fi
 tar -jxvf guess_language-spirit-0.5.3.tar.bz2
 source /usr/python/venv/longscave/bin/activate
-cd /tmp/guess_languagetmp/guess_language-spirit-0.5.3
+cd /tmp/guess_languagetmp/guess_language-spirit-0.5.3 || exit
 python setup.py install
 else
 echo "guess_language package exists"
@@ -254,9 +254,9 @@ mkdir /etc/supervisor/conf.d
 fi
 if [ ! -d "/tmp/supervisortmp" ];then
 echo "install supervisor from source"
-cd /tmp
+cd /tmp || exit
 mkdir supervisortmp
-cd /tmp/supervisortmp
+cd /tmp/supervisortmp || exit
 git clone https://github.com/Supervisor/supervisor.git
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
@@ -264,7 +264,7 @@ git clone https://github.com/Supervisor/supervisor.git
 	  fi
 fi
 if [ ! -f "/usr/python/venv/longscave/bin/supervisord" ];then
-cd /tmp/supervisortmp/supervisor
+cd /tmp/supervisortmp/supervisor || exit
 python setup.py install
 fi
 if [ ! -f "/etc/supervisor/conf.d/longscave.ini" ];then
@@ -376,7 +376,7 @@ if [ $? == 1 ];then
   mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
   # database migration
   echo "flask db upgrade"
-  cd /home/xiaowu/longscave
+  cd /home/xiaowu/longscave || exit
   source /usr/python/venv/longscave/bin/activate
   flask db upgrade
 fi
