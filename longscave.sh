@@ -114,6 +114,7 @@ if [[ $myssl == "openssl" ]] || [[ $myssl == "certbot" ]];then
   echo "encryption method: $myssl"
 else
   echo "encryption should be eigth openssl or certbot"
+  exit 1
 fi
 
 ## add user
