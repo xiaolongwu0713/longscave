@@ -398,6 +398,9 @@ if [ $? == 1 ];then
   echo "flask db upgrade"
   cd /home/xiaowu/longscave || exit
   source /usr/python/venv/longscave/bin/activate
+  # set up env, or flask db upgrade will fail because ascii code issue with click package
+  export LC_ALL=en_US.utf-8
+  export LANG=en_US.utf-8
   flask db upgrade
 fi
 #open https:ip to verify the result.
