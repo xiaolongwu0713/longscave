@@ -25,3 +25,4 @@ class Config(object):
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://'
     POSTS_PER_PAGE = 25
     ARTICLES_PER_PAGE = 2
+    ROWS_PER_PAGE = 5

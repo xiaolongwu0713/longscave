@@ -22,17 +22,17 @@ def index():
 
 
 # query table data against mysql through sqlalchemy
-@bp.route('/user_manager', methods=['GET', 'POST'])
-def user_manager():
+@bp.route('/user_admin', methods=['GET', 'POST'])
+def user_admin():
     env_name = request.args.get('env_name')
     #flash('prd_env captured')
     page = request.args.get('page', 1, type=int)
     rows = User.query.order_by(User.id.desc()).paginate(
         page, current_app.config['ROWS_PER_PAGE'], False)
-    next_url = url_for('visitor.mdtablesqlalchemy', page=rows.next_num, env_name='prd_env') \
+    next_url = url_for('admin.user_admin', page=rows.next_num, env_name='prd_env') \
         if rows.has_next else None
-    prev_url = url_for('visitor.mdtablesqlalchemy', page=rows.prev_num, env_name='prd_env') \
+    prev_url = url_for('admin.user_admin', page=rows.prev_num, env_name='prd_env') \
         if rows.has_prev else None
-    return render_template('visitor/base_mdtable.html', env_name=env_name,
+    return render_template('admin/userTable.html', env_name=env_name,
                            rows=rows.items, next_url=next_url,
                            prev_url=prev_url)

@@ -1,18 +1,26 @@
-<div class="container" style = "position:absolute; padding:0px; margin:0px;right:0%; top:0%;left:0%;outline: none; width:100%">
+{% extends "common/base.html" %}
+
+{% block link %}
+{{ super() }}
+{% endblock %}
+
+{% block otherstyle %}
+{% endblock %}
+
+{% block subcontent %}
+<div class="container" >
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
-                    <div class="col-sm-6">
-						<h2><b> {{ env_name }} </b></h2>
-					</div>
 					{% if current_user.is_authenticated %}
-					<div class="col-sm-6">
-						<button data-target="#addRecordModal" class="btn btn-success" data-toggle="modal"><i class="material-icons"></i> <span>Add New Records</span></button>
+					<div class="col-sm-3">
+						<button data-target="#addRecordModal" class="btn btn-success" data-toggle="modal"><i class="material-icons"></i> <span>Add New User</span></button>
 					</div>
 					{% endif %}
                 </div>
             </div>
             <table class="table table-striped table-hover" id=mytable>
+				<caption>User list</caption>
                 <thead>
                     <tr>
 						<th>
@@ -21,11 +29,11 @@
 								<label for="selectAll"></label>
 							</span>
 						</th>
-                        <th style="width: 10%">IP</th>
-                        <th style="width: 20%">Connection string</th>
-						<th style="width: 10%">Description</th>
-                        <th style="width: 30%" >backup policy</th>
-                        <th style="width: 30%">comments</th>
+                        <th style="width: 10%">ID</th>
+                        <th style="width: 20%">Username</th>
+						<th style="width: 10%">Email</th>
+                        <th style="width: 30%" >about_me</th>
+                        <th style="width: 30%">last_seen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,17 +45,17 @@
 								<label for="checkbox5"></label>
 							</span>
 						</td>
-                        <td>{{ row.ipaddress }}</td>
-                        <td>{{ row.connectionstr }}</td>
-						<td>{{ row.description }}</td>
-                        <td>{{ row.backupdesc }}</td>
-                        <td>{{ row.jobs }}</td>
+                        <td>{{ row.id }}</td>
+                        <td>{{ row.username }}</td>
+						<td>{{ row.email }}</td>
+                        <td>{{ row.about_me }}</td>
+                        <td>{{ row.last_seen }}</td>
                         {% if current_user.is_authenticated %}
                         <!-- changeme -->
                         <td>
-                            <button data-target="#editEmployeeModal" class="btn btn-primary btn-xs" data-uniqueid="{{ row.uniqId }}" data-col1="{{ row.ipaddress }}" data-col2="{{ row.connectionstr }}" data-col3="{{ row.description }}" data-col4="{{ row.backupdesc }}" data-col5="{{ row.jobs }}" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"></i>E</button>
+                            <button data-target="#editModal" class="btn btn-primary btn-xs" data-id="{{ row.id }}" data-username="{{ row.username }}" data-email="{{ row.email }}" data-about_me="{{ row.about_me }}" data-last_seen="{{ row.last_seen }}" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"></i>E</button>
                             <!-- changeme -->
-                            <button data-target="#deleteEmployeeModal" class="btn btn btn-danger btn-xs" data-toggle="modal" data-uniqueid="{{ row.uniqId }}" ><i class="material-icons" data-toggle="tooltip" title="Delete"></i>X</button>
+                            <button data-target="#deleteEmployeeModal" class="btn btn btn-danger btn-xs" data-toggle="modal" data-id="{{ row.id }}" ><i class="material-icons" data-toggle="tooltip" title="Delete"></i>X</button>
                         </td>
                         {% endif %}
                     </tr>
@@ -81,4 +89,271 @@
                 </ul>
             </div> -->
         </div>
-</div>
+    </div>
+	<!-- Edit Modal HTML -->
+	<div id="addRecordModal" class="modal fade" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">
+						<h4 class="modal-title">Add new user</h4>
+						<input display="inline-block" type="text" id="env_name" readonly="readonly" value={{ env_name }}>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label>username</label>
+							<input type="text" class="form-control" id="col1">
+						</div>
+						<div class="form-group">
+							<label>email</label>
+							<input type="email" class="form-control" id="col2">
+						</div>
+						<div class="form-group">
+							<label>password</label>
+							<textarea class="form-control" id="col3"></textarea>
+						</div>
+						<div class="form-group">
+							<label>about me</label>
+							<input type="text" class="form-control" id="col4">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+						<input id="btnAdd" type="button" class="btn btn-success" value="Add">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Edit Modal HTML -->
+	<div id="editEmployeeModal" class="modal fade" data-focus="true" tabindex="-1" aria-hidden="true" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form >
+					<div class="modal-header">
+						<h4 class="modal-title">Edit entry</h4>
+						<h6 display="inline-block">UniqId</h6>
+						<input display="inline-block" type="text" id="uniqueid" readonly="readonly">
+						<input display="inline-block" type="text" id="env_name" readonly="readonly" value={{ env_name }}>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+
+						<div class="form-group">
+							<label>IP</label>
+							<input type="text" class="form-control" id="col11">
+						</div>
+						<div class="form-group">
+							<label>Connection string</label>
+							<input type="email" class="form-control" id="col12">
+						</div>
+						<div class="form-group">
+							<label>Description</label>
+							<textarea class="form-control" id="col13"></textarea>
+						</div>
+						<div class="form-group">
+							<label>backup policy</label>
+							<input type="text" class="form-control" id="col14">
+						</div>
+						<div class="form-group">
+							<label>comments</label>
+							<input type="text" class="form-control" id="col15">
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        				<button id="btnUpdate" type="button" class="btn btn-primary">Update</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- Delete Modal HTML -->
+	<div id="deleteEmployeeModal" class="modal fade"  data-focus="true" tabindex="-1" aria-hidden="true" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">
+						<h4 class="modal-title">Delete Employee</h4>
+						<input type="text" id="deluniqueid" readonly="readonly">
+						<input display="inline-block" type="text" id="env_name" readonly="readonly" value={{ env_name }}>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you want to delete these Records?</p>
+						<p class="text-warning"><small>This action cannot be undone.</small></p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+						<button  id="btnDel" type="button" class="btn btn-danger">Delete</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	{{ super() }}
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script>
+    function hightlight_env_on_left_panel1(thisname) {
+      console.log('try to highlight')
+      document.getElementById(prd_env).setAttribute("class", "active");
+      if(env_name = prd_env){
+      document.getElementById(prd_env).setAttribute("class", "active");
+      }else if (env_name = test_env){
+      document.getElementById(test_env).setAttribute("class", "active");
+      }else if (env_name = internal_use){
+      document.getElementById(internal_use).setAttribute("class", "active");
+      }
+    }
+
+    function hightlight_env_on_left_panel2(thisname) {
+      console.log('try to highlight');
+      var parentname = thisname.parentNode;
+      var elems = parentname.getElementByTagName('li');
+      for  (i=0; i<elems.length; i++){
+        elems[i].className = '';
+      }
+      thisname.className = 'active';
+    }
+
+	</script>
+
+<script>
+$(document).ready(function(){
+	// Activate tooltip
+	$('[data-toggle="tooltip"]').tooltip();
+	// Select/Deselect checkboxes
+	var checkbox = $('table tbody input[type="checkbox"]');
+	$("#selectAll").click(function(){
+		if(this.checked){
+			checkbox.each(function(){
+				this.checked = true;
+			});
+		} else{
+			checkbox.each(function(){
+				this.checked = false;
+			});
+		}
+	});
+	checkbox.click(function(){
+		if(!this.checked){
+			$("#selectAll").prop("checked", false);
+		}
+	});
+});
+
+
+$(function() {
+  $('#editEmployeeModal').on('show.bs.modal', function(event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    //var uniqId1 = button.data('uniqId')  // Extract info from data-* attributes
+    var uniqueid = button.data('uniqueid')
+    var col1 = button.data('col1')
+    var col2 = button.data('col2')
+    var col3 = button.data('col3')
+    var col4 = button.data('col4')
+    var col5 = button.data('col5')
+    //console.log(eduniqueid)
+    //console.log(edname)
+    //console.log(edemail)
+
+    var modal = $(this)
+    modal.find('#uniqueid').val(uniqueid);
+    //var elm = document.getElementById(uniqueid);
+    //elm.value = uniqueid;
+    // ****  modal id should not be the same as its parents', so change ('#col1') to ('#col11')
+    modal.find('#col11').val(col1);
+    modal.find('#col12').val(col2);
+    modal.find('#col13').val(col3);
+    modal.find('#col14').val(col4);
+    modal.find('#col15').val(col5);
+
+  });
+});
+
+$(function() {
+  $('#deleteEmployeeModal').on('show.bs.modal', function(event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    //var uniqId1 = button.data('uniqId')  // Extract info from data-* attributes
+    var uniqueid = button.data('uniqueid')
+    console.log(uniqueid)
+    var modal = $(this)
+    modal.find('#deluniqueid').val(uniqueid)
+    //console.log(modal.find('#uniqueid').val())
+    //var elm = document.getElementById(uniqueid);
+    //elm.value = uniqueid;
+  });
+});
+
+ $(function(){
+          $('#btnUpdate').click(function(){
+            $.ajax({
+              url : '/updateRecord',
+              data : {env_name:$('#env_name').val(),uniqueid:$('#uniqueid').val(),col1:$('#col11').val(),col2:$('#col12').val(),col3:$('#col13').val(),col4:$('#col14').val(),col5:$('#col15').val()},
+              type : 'POST',
+              success: function(retdata){
+              	  if (retdata=="success") {
+				  if (confirm('Update successful! You may close the popup window to reflact the change')) {
+            		window.location.reload();
+                    }}
+              },
+              error: function(retdata){
+                alert(retdata);
+              }
+            });
+          });
+      });
+
+  $(function(){
+          $('#btnAdd').click(function(){
+            $.ajax({
+              url : '/auth/user_admin', //comment outline
+              data : {env_name:$('#env_name').val(),uniqueid:$('#uniqueid').val(),col1:$('#col1').val(),col2:$('#col2').val(),col3:$('#col3').val(),col4:$('#col4').val(),col5:$('#col5').val()},
+              type : 'POST',
+              success: function(retdata){
+              	  if (retdata=="success") {
+				  if (confirm('Save successful! You may close the popup window to reflact the change')) {
+            		window.location.reload();
+                    }}
+              },
+              error: function(retdata){
+                alert(retdata);
+              }
+            });
+          });
+      });
+
+  $(function(){
+          $('#btnDel').click(function(){
+          	//var number=document.getElementById("deluniqueid").value;
+			//alert(number);
+            $.ajax({
+              url : '/delRecord',
+              data : {uniqueid:$('#deluniqueid').val(),env_name:$('#env_name').val()},
+              type : 'POST',
+              success: function(retdata){
+              	  if (retdata=="success") {
+            		window.location.reload();
+                    }
+              },
+              error: function(retdata){
+                alert(retdata);
+              }
+            });
+          });
+      });
+</script>
+{% endblock %}
+
+
+
+<!--@
+
+@-->

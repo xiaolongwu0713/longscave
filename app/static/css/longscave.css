@@ -42,3 +42,58 @@ top: 30%;
 position: relative;
 }
 
+/* user table and modal of user info */
+
+/* Modal styles */
+
+#addRecordModal {
+top:20%;
+right:10%;
+left:10%;
+outline: none;
+width:100%;
+}
+
+#addRecordModal .modal-dialog{
+position:absolute;
+right:0%;
+top:20%;
+left:0%;
+outline: none;
+}
+
+#editEmployeeModal {
+top:5%;
+right:20%;
+left:0%;
+outline: none;
+width:100%;
+}
+
+#editEmployeeModal .modal-dialog{
+position:absolute;
+right:0%;
+top:5%;
+left:0%;
+outline: none;
+}
+
+
+#deleteEmployeeModal {
+top:5%;
+right:20%;
+left:0%;
+outline: none;
+width:100%;
+}
+
+#deleteEmployeeModal .modal-dialog{
+position:absolute;
+right:0%;
+top:5%;
+left:0%;
+outline: none;
+}
+.fade {
+	opacity:4;  {# modal will be invisible without this line #}
+}
