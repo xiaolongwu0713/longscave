@@ -55,7 +55,7 @@
                         <td>
                             <button data-target="#editModal" class="btn btn-primary btn-xs" data-id="{{ row.id }}" data-username="{{ row.username }}" data-email="{{ row.email }}" data-about_me="{{ row.about_me }}" data-last_seen="{{ row.last_seen }}" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"></i>E</button>
                             <!-- changeme -->
-                            <button data-target="#deleteEmployeeModal" class="btn btn btn-danger btn-xs" data-toggle="modal" data-id="{{ row.id }}" ><i class="material-icons" data-toggle="tooltip" title="Delete"></i>X</button>
+                            <button data-target="#deleteModal" class="btn btn btn-danger btn-xs" data-toggle="modal" data-id="{{ row.id }}" ><i class="material-icons" data-toggle="tooltip" title="Delete"></i>X</button>
                         </td>
                         {% endif %}
                     </tr>
@@ -97,7 +97,7 @@
 				<form>
 					<div class="modal-header">
 						<h4 class="modal-title">Add new user</h4>
-						<input display="inline-block" type="text" id="env_name" readonly="readonly" value={{ env_name }}>
+						<input display="inline-block" type="text" id="envname" readonly="readonly" value={{ env_name }}>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
@@ -106,12 +106,12 @@
 							<input type="text" class="form-control" id="col1">
 						</div>
 						<div class="form-group">
-							<label>email</label>
-							<input type="email" class="form-control" id="col2">
+							<label>password</label>
+							<input type="text" class="form-control" id="col2">
 						</div>
 						<div class="form-group">
-							<label>password</label>
-							<textarea class="form-control" id="col3"></textarea>
+							<label>email</label>
+							<input type="email" class="form-control" id="col3">
 						</div>
 						<div class="form-group">
 							<label>about me</label>
@@ -127,7 +127,7 @@
 		</div>
 	</div>
 	<!-- Edit Modal HTML -->
-	<div id="editEmployeeModal" class="modal fade" data-focus="true" tabindex="-1" aria-hidden="true" role="dialog">
+	<div id="editModal" class="modal fade" data-focus="true" tabindex="-1" aria-hidden="true" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form >
@@ -141,24 +141,20 @@
 					<div class="modal-body">
 
 						<div class="form-group">
-							<label>IP</label>
+							<label>Username</label>
 							<input type="text" class="form-control" id="col11">
 						</div>
 						<div class="form-group">
-							<label>Connection string</label>
+							<label>email</label>
 							<input type="email" class="form-control" id="col12">
 						</div>
 						<div class="form-group">
-							<label>Description</label>
+							<label>about_me</label>
 							<textarea class="form-control" id="col13"></textarea>
 						</div>
 						<div class="form-group">
-							<label>backup policy</label>
+							<label>last_seen</label>
 							<input type="text" class="form-control" id="col14">
-						</div>
-						<div class="form-group">
-							<label>comments</label>
-							<input type="text" class="form-control" id="col15">
 						</div>
 
 					</div>
@@ -171,7 +167,7 @@
 		</div>
 	</div>
 	<!-- Delete Modal HTML -->
-	<div id="deleteEmployeeModal" class="modal fade"  data-focus="true" tabindex="-1" aria-hidden="true" role="dialog">
+	<div id="deleteModal" class="modal fade"  data-focus="true" tabindex="-1" aria-hidden="true" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<form>
@@ -251,15 +247,14 @@ $(document).ready(function(){
 
 
 $(function() {
-  $('#editEmployeeModal').on('show.bs.modal', function(event) {
+  $('#editModal').on('show.bs.modal', function(event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     //var uniqId1 = button.data('uniqId')  // Extract info from data-* attributes
-    var uniqueid = button.data('uniqueid')
-    var col1 = button.data('col1')
-    var col2 = button.data('col2')
-    var col3 = button.data('col3')
-    var col4 = button.data('col4')
-    var col5 = button.data('col5')
+    var uniqueid = button.data('id')
+    var col1 = button.data('username')
+    var col2 = button.data('email')
+    var col3 = button.data('about_me')
+    var col4 = button.data('last_seen')
     //console.log(eduniqueid)
     //console.log(edname)
     //console.log(edemail)
@@ -273,16 +268,14 @@ $(function() {
     modal.find('#col12').val(col2);
     modal.find('#col13').val(col3);
     modal.find('#col14').val(col4);
-    modal.find('#col15').val(col5);
-
   });
 });
 
 $(function() {
-  $('#deleteEmployeeModal').on('show.bs.modal', function(event) {
+  $('#deleteModal').on('show.bs.modal', function(event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     //var uniqId1 = button.data('uniqId')  // Extract info from data-* attributes
-    var uniqueid = button.data('uniqueid')
+    var uniqueid = button.data('id')
     console.log(uniqueid)
     var modal = $(this)
     modal.find('#deluniqueid').val(uniqueid)
@@ -295,8 +288,8 @@ $(function() {
  $(function(){
           $('#btnUpdate').click(function(){
             $.ajax({
-              url : '/updateRecord',
-              data : {env_name:$('#env_name').val(),uniqueid:$('#uniqueid').val(),col1:$('#col11').val(),col2:$('#col12').val(),col3:$('#col13').val(),col4:$('#col14').val(),col5:$('#col15').val()},
+              url : '/admin/edituser',
+              data : {username:$('#col11').val(), email:$('#col12').val(),about_me:$('#col13').val(),last_seen:$('#col14').val(), uniqueid:$('#uniqueid').val()},
               type : 'POST',
               success: function(retdata){
               	  if (retdata=="success") {
@@ -310,12 +303,11 @@ $(function() {
             });
           });
       });
-
   $(function(){
           $('#btnAdd').click(function(){
             $.ajax({
-              url : '/auth/user_admin', //comment outline
-              data : {env_name:$('#env_name').val(),uniqueid:$('#uniqueid').val(),col1:$('#col1').val(),col2:$('#col2').val(),col3:$('#col3').val(),col4:$('#col4').val(),col5:$('#col5').val()},
+              url : '/admin/add_user', //comment outline
+              data : {username:$('#col1').val(),password:$('#col2').val(),email:$('#col3').val(),about_me:$('#col4').val()},
               type : 'POST',
               success: function(retdata){
               	  if (retdata=="success") {
@@ -335,8 +327,8 @@ $(function() {
           	//var number=document.getElementById("deluniqueid").value;
 			//alert(number);
             $.ajax({
-              url : '/delRecord',
-              data : {uniqueid:$('#deluniqueid').val(),env_name:$('#env_name').val()},
+              url : '/admin/deluser',
+              data : {uniqueid:$('#deluniqueid').val()},
               type : 'POST',
               success: function(retdata){
               	  if (retdata=="success") {
