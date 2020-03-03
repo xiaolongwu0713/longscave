@@ -44,30 +44,6 @@ def article():
                            articles=articles.items, next_url=next_url,prev_url=prev_url)
 
 
-
-@bp.route('/hireme', methods=['GET', 'POST'])
-def hireme():
-    # flash('jump to main')
-    # flash(current_user.username)
-    return render_template('/visitor/hireme.html')
-    # return '<title>我的第一个 HTML 页面</title>'
-    # return redirect(url_for('default.explore'))
-
-
-@bp.route('/aboutme', methods=['GET', 'POST'])
-def aboutme():
-    # flash('jump to main')
-    # flash(current_user.username)
-    return render_template('/visitor/aboutme.html')
-
-
-@bp.route('/course', methods=['GET', 'POST'])
-def course():
-    # flash('jump to main')
-    # flash(current_user.username)
-    return render_template('/visitor/course.html')
-
-
 # visitor send message in modal. This function receive message and store in db
 @bp.route('/sendMeMessageModal', methods=['GET', 'POST'])
 def sendMeMessageModal():

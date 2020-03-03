@@ -23,6 +23,29 @@ def index():
     # return redirect(url_for('default.explore'))
 
 
+@bp.route('/aboutme', methods=['GET', 'POST'])
+def aboutme():
+    # flash('jump to main')
+    # flash(current_user.username)
+    return render_template('/admin/aboutme.html')
+
+
+@bp.route('/hireme', methods=['GET', 'POST'])
+def hireme():
+    # flash('jump to main')
+    # flash(current_user.username)
+    return render_template('/admin/hireme.html')
+    # return '<title>我的第一个 HTML 页面</title>'
+    # return redirect(url_for('default.explore'))
+
+
+@bp.route('/course', methods=['GET', 'POST'])
+def course():
+    # flash('jump to main')
+    # flash(current_user.username)
+    return render_template('/admin/course.html')
+
+
 # query table data against mysql through sqlalchemy
 @bp.route('/user_admin', methods=['GET', 'POST'])
 def user_admin():
