@@ -287,6 +287,8 @@ cd /tmp/supervisortmp/supervisor || exit
 python setup.py install
 fi
 
+# TODO: remate "unix:///tmp/supervisor" to "unix:///var/run/supervisor.sock", as well as sock, pid, socket, log file out
+#  of tmp dir, or it will complain "unix:///tmp/supervisor.sock no such file" when do supervisor start/stop/reload app
 if [ ! -f "/etc/supervisor/conf.d/longscave.ini" ];then
 /usr/python/venv/longscave/bin/echo_supervisord_conf > /etc/supervisor/supervisord.conf
 cat>>/etc/supervisor/supervisord.conf<<EOF
