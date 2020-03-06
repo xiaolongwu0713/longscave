@@ -50,6 +50,9 @@ def create_app(config_class=Config):
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
+    from app.alipay import bp as alipay_bp
+    app.register_blueprint(alipay_bp, url_prefix='/alipay')
+
     from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp, url_prefix='/admin')
 

@@ -26,3 +26,8 @@ class Config(object):
     POSTS_PER_PAGE = 25
     ARTICLES_PER_PAGE = 2
     ROWS_PER_PAGE = 5
+    # Alipay
+    APP_ID_TEST = 2016101800716773
+    ALIPAY_PUBLIC_KEY_PATH = os.path.join(os.getcwd(), 'app/alipay/pem/pem_test', 'alipay_public_key.pem')
+    APP_PRIVATE_KEY_PATH = os.path.join(os.getcwd(), 'app/alipay/pem/pem_test', 'app_private_key.pem')
+

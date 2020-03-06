@@ -1,0 +1,55 @@
+{% extends 'bootstrap/base.html' %}
+{% include '/common/head-block.html' %}
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+
+<div align="center">
+  <h1>请使用支付宝扫码付款</h1>
+  <p>订单编号: {{ out_trade_no }}</p>
+  <img style="width:50%, height:50%" class="img-responsive" id="qr_image" src="/static/img/alipay_qr/{{ qrcode_file_name }}">
+</div>
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+<script type="text/javascript">
+function waitPay() {
+    var rq = new XMLHttpRequest();
+    var out_trade_no = "{{ out_trade_no }}"
+    // 默认异步请求
+    rq.open('GET', "/alipay/query_order/" + out_trade_no);
+    rq.send()
+    // 这个请求服务端阻塞直到支付成功才会触发,, leave the redirect function to routes.py
+    rq.onload = function(data) {
+        // 跳转支付成功界面
+        if (this.readyState == 4 && this.status == 200) {
+          //window.location.href = "/alipay/pay_success"
+          }
+    }
+}
+// 立即执行
+//waitPay()
+
+$(document).ready(function(){
+  $('#qr_image').on('load',function(){
+    var out_trade_no = "{{ out_trade_no }}"
+    $.ajax({
+      url : '/alipay/query_order1/',
+      data : {out_trade_no:out_trade_no},
+      type : 'POST',
+      success: function(retdata){
+          if (retdata=="canceled") {
+          window.location.href = "/alipay/pay_success"
+           }
+           else if (retdata=="paied") {
+          window.location.href = "/alipay/pay_success"
+           }
+           },
+      error: function(retdata){
+        alert(retdata);
+      }
+    });
+  });
+  });
+</script>
+{% endblock body %}
