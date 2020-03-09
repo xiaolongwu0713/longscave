@@ -15,29 +15,29 @@ def init_alipay_cfg():
     '''
     alipay = AliPay(
         appid=current_app.config['APP_ID_TEST'],
-        app_notify_url = 'localhost:5000/call_back.html',
+        app_notify_url='localhost:5000/call_back.html',
         alipay_public_key_string=open(current_app.config['ALIPAY_PUBLIC_KEY_PATH']).read(),
-        app_private_key_string = open(current_app.config['APP_PRIVATE_KEY_PATH']).read(),
-        sign_type = "RSA",  # RSA 或者 RSA2
+        app_private_key_string=open(current_app.config['APP_PRIVATE_KEY_PATH']).read(),
+        sign_type="RSA",  # RSA 或者 RSA2
         debug=True  # 默认False ,若开启则使用沙盒环境的支付宝公钥
     )
     return alipay
 
 
-@bp.route('/pay_success', methods=['GET','POST'])
+@bp.route('/pay_success', methods=['GET', 'POST'])
 def pay_success():
     return render_template('/alipay/pay_success.html')
 
 
-@bp.route('/canceled', methods=['GET','POST'])
+@bp.route('/canceled', methods=['GET', 'POST'])
 def canceled():
     return render_template('/alipay/canceled.html')
 
 
 @bp.route('/show_qr/<product>/<int:amount>', methods=['GET','POST'])
 def show_qr(product, amount):
-#@bp.route('/show_qr', methods=['GET','POST'])
-#def show_qr():
+# @bp.route('/show_qr', methods=['GET','POST'])
+# def show_qr():
     #product = 'thing1111'
     #amount = 10.00
     subject = product
