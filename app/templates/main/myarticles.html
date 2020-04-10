@@ -25,3 +25,20 @@
 </container-fluid>
 
 {% endblock %}
+
+<!--TODO: how to edit existing article-->
+<script>
+$(document).on("ready",function(){
+  $("#editarticle").click(function(){
+  articleId=$("articleId").text()
+  $("#editarticle").on("click",function(){
+               loadarticle();
+            });
+   function loadarticle(){
+            url = "b.html?articleId="+articleId;
+            window.location.href = url;
+        }
+  });
+
+});
+</script>

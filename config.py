@@ -26,8 +26,14 @@ class Config(object):
     POSTS_PER_PAGE = 25
     ARTICLES_PER_PAGE = 2
     ROWS_PER_PAGE = 5
-    # Alipay
+    # Alipay -- sandbox env
+    CANCEL_TIME = 60
     APP_ID_TEST = 2016101800716773
-    ALIPAY_PUBLIC_KEY_PATH = os.path.join(os.getcwd(), 'app/alipay/pem/pem_test', 'alipay_public_key.pem')
-    APP_PRIVATE_KEY_PATH = os.path.join(os.getcwd(), 'app/alipay/pem/pem_test', 'app_private_key.pem')
+    ALIPAY_PUBLIC_KEY_PATH_TEST = os.path.join(os.getcwd(), 'app/alipay/pem/pem_test', 'alipay_public_key.pem')
+    APP_PRIVATE_KEY_PATH_TEST = os.path.join(os.getcwd(), 'app/alipay/pem/pem_test', 'app_private_key.pem')
+
+    # Alipay -- production
+    APP_ID_PRD = 2021001139661958
+    ALIPAY_PUBLIC_KEY_PATH_PRD = os.path.join(os.getcwd(), 'app/alipay/pem/pem_prd', 'alipay_public_key.pem')
+    APP_PRIVATE_KEY_PATH_PRD = os.path.join(os.getcwd(), 'app/alipay/pem/pem_prd', 'app_private_key.pem')
 

@@ -3,35 +3,37 @@
 {% block body %}
 <!-- navbar-->
 {% include '/common/navbar-block-visitor.html' %}
-
+{% include '/common/flash-msg-block.html' %}
 <div align="center">
   <h1>请使用支付宝扫码付款</h1>
   <p>订单编号: {{ out_trade_no }}</p>
-  <img style="width:50%, height:50%" class="img-responsive" id="qr_image" src="/static/img/alipay_qr/{{ qrcode_file_name }}">
+  <img style="width:20%, height:20%" class="img-responsive" id="qr_image" src="/static/img/alipay_qr/{{ qrcode_file_name }}">
 </div>
+<div align="center">
+<p class="text-wrap" style="font-size:50px; text-align:center;"  id="timer"></p>
+</div>
+
 {% include 'common/footer.html' %}
 <!-- JavaScript files-->
 {% include 'common/js-block.html' %}
 <script type="text/javascript">
-function waitPay() {
-    var rq = new XMLHttpRequest();
-    var out_trade_no = "{{ out_trade_no }}"
-    // 默认异步请求
-    rq.open('GET', "/alipay/query_order/" + out_trade_no);
-    rq.send()
-    // 这个请求服务端阻塞直到支付成功才会触发,, leave the redirect function to routes.py
-    rq.onload = function(data) {
-        // 跳转支付成功界面
-        if (this.readyState == 4 && this.status == 200) {
-          //window.location.href = "/alipay/pay_success"
-          }
-    }
-}
-// 立即执行
-//waitPay()
+// TODO: count down can't show up.
+function countdown() {
+var secondsleft = 60;
+setInterval(function() {
+document.getElementById("timer").innerHTML = secondsleft + "s";
+secondsleft=secondsleft - 1;
+}, 1000);
+};
+countdown();
+console.log("haha1")
 
 $(document).ready(function(){
-  $('#qr_image').on('load',function(){
+  console.log("haha2")
+  // $("img").on("load",function(){
+  // #qr_image failed to trigger the function, don't know why
+  $("#qr_image").on("load",function(){
+    console.log("haha")
     var out_trade_no = "{{ out_trade_no }}"
     $.ajax({
       url : '/alipay/query_order1/',
@@ -39,7 +41,7 @@ $(document).ready(function(){
       type : 'POST',
       success: function(retdata){
           if (retdata=="canceled") {
-          window.location.href = "/alipay/pay_success"
+          window.location.href = "/alipay/canceled"
            }
            else if (retdata=="paied") {
           window.location.href = "/alipay/pay_success"
@@ -50,6 +52,7 @@ $(document).ready(function(){
       }
     });
   });
-  });
+});
+
 </script>
 {% endblock body %}

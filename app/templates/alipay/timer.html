@@ -1,0 +1,24 @@
+{% extends 'bootstrap/base.html' %}
+{% include '/common/head-block.html' %}
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+{% include '/common/flash-msg-block.html' %}
+
+<p class="text-wrap" style="font-size:50px; text-align:center;"  id="timer"></p>
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+<script type="text/javascript">
+
+function countdown() {
+var secondsleft = 60;
+setInterval(function() {
+document.getElementById("timer").innerHTML = secondsleft + "s";
+secondsleft=secondsleft - 1;
+}, 1000);
+};
+countdown();
+</script>
+{% endblock body %}

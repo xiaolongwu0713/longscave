@@ -1,0 +1,28 @@
+{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% include '/common/head-block.html' %}
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+    {{ result }}
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+
+{% endblock body %}
