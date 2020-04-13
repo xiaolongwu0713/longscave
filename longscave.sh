@@ -118,6 +118,7 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
 fi
 
  # certificate
+ # usage: ./longscave.sh cert certbot
 if [[ $# == 1 ]] && [[ $1 == "cert" ]];then
  if [ $2 == "certbot" ];then
 	yum install -y -q certbot python2-certbot-nginx
@@ -127,6 +128,8 @@ if [[ $# == 1 ]] && [[ $1 == "cert" ]];then
 	  fi
 	chmod a+xr /home/xiaowu
 	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
+	current_time=$(date "+%Y.%m.%d-%H.%M.%S")
+	mv /etc/nginx/conf.d/openssl.conf /tmp/openssl.conf.bak.$current_time
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
 	nginx -s reload
 	fi
