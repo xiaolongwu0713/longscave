@@ -117,6 +117,21 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
 
 fi
 
+ # certificate
+if [[ $# == 1 ]] && [[ $1 == "cert" ]];then
+ if [ $2 == "certbot" ];then
+	yum install -y -q certbot python2-certbot-nginx
+		if [ $? == 1 ];then
+	  echo "failed, exit now"
+	  exit 1
+	  fi
+	chmod a+xr /home/xiaowu
+	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
+	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
+	nginx -s reload
+	fi
+fi
+
 
 # deploy web app using openssl/certbot
 if [[ $# == 2 ]] && [[ $1 != "deploy" ]];then
