@@ -39,3 +39,6 @@ venv
 app.db
 microblog.log*
 .idea/*
+
+# Alipay QR code image
+qrcodeimg*.png

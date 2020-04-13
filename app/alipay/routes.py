@@ -104,7 +104,7 @@ def get_qr_code(code_url, subject, out_trade_no):
     )
     qr.add_data(code_url)  # 二维码所含信息
     img = qr.make_image()  # 生成二维码图片
-    filename = str(subject) + str(out_trade_no) + str(".png")
+    filename = str("qrcodeimg") + str(subject) + str(out_trade_no) + str(".png")
     outputfile = os.path.join(os.getcwd(), 'app/static/img/alipay_qr/', filename)
     img.save(outputfile)
     print('二维码保存成功！')
