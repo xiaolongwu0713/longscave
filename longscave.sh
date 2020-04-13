@@ -371,6 +371,9 @@ if [ $myssl == "openssl" ];then
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
 	nginx -s reload
 elif [ $myssl == "certbot" ];then
+  yum -y install yum-utils
+  yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
 	yum install -y -q certbot python2-certbot-nginx
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
