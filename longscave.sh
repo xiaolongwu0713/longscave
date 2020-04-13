@@ -119,7 +119,7 @@ fi
 
  # certificate
  # usage: ./longscave.sh cert certbot
-if [[ $# == 1 ]] && [[ $1 == "cert" ]];then
+if [[ $# == 2 ]] && [[ $1 == "cert" ]];then
  if [ $2 == "certbot" ];then
 	yum install -y -q certbot python2-certbot-nginx
 		if [ $? == 1 ];then
