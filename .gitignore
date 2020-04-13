@@ -42,3 +42,6 @@ microblog.log*
 
 # Alipay QR code image
 qrcodeimg*.png
+
+ # misc
+._plyphicons.css
