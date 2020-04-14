@@ -10,24 +10,17 @@ setenforce 0
 if [[ $# == 0 ]] || [[ $# -gt 2 ]];then # $#: parameter number
 echo "usage:
     To deploy: $0 deploy openssl/certbot
-    To start/stop/erase: $0 start/stop/erase"
+    To start/stop/erase: $0 start/stop/erase
+    To certificate:$0 cert certbot"
 exit 1
 fi
 
 # start/stop/erase web app
 # usage: ./longscave start/stop/erase
-if [[ $# == 1 ]];then
-  if [[ $1 == "start" ]]  || [[ $1 == "stop" ]] || [[ $1 == "erase" ]];then
-  echo "$1" longscave
-  else
-  echo "usage:
-      To deploy: $0 deploy openssl/certbot
-      To start/stop/erase: $0 start/stop/erase"
-  exit 1
-  fi
-fi
-
 if [[ $# == 1 ]] && [[ $1 == "start" ]];then
+  current_time=$(date "+%Y%m%d-%H%M%S")
+  exec 1>>/tmp/longscave-start-$current_time.log
+  exec 2>>/tmp/longscave-start-$current_time.log
   echo "start supervisord"
   /usr/python/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
   /usr/python/venv/longscave/bin/supervisorctl reload
@@ -52,6 +45,9 @@ if [[ $# == 1 ]] && [[ $1 == "start" ]];then
 fi
 
 if [[ $# == 1 ]] && [[ $1 == "stop" ]];then
+  current_time=$(date "+%Y%m%d-%H%M%S")
+  exec 1>>/tmp/longscave-stop-$current_time.log
+  exec 2>>/tmp/longscave-stop-$current_time.log
   # stop web app
   echo "stop longscave web app"
   /usr/python/venv/longscave/bin/supervisorctl stop longscave
@@ -67,6 +63,9 @@ if [[ $# == 1 ]] && [[ $1 == "stop" ]];then
 fi
 
 if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
+  current_time=$(date "+%Y%m%d-%H%M%S")
+  exec 1>>/tmp/longscave-erase-$current_time.log
+  exec 2>>/tmp/longscave-erase-$current_time.log
   # delete user 'xiaowu'
   echo "keep user xiaowu"
 
