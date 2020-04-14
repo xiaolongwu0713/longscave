@@ -1,15 +1,12 @@
 #！/bin/bash
-current_time=$(date "+%Y%m%d-%H%M%S")
-exec 1>>/tmp/longscave-installation$current_time.log
-exec 2>>/tmp/longscave-installation$current_time.log
 setenforce 0
 # usage: longscave.sh start/stop/erase
-# usage: longscave.sh deploy openssl/certbot (default is openssl)
+# usage: longscave.sh install openssl/certbot (default is openssl)
 # usage: longscave.sh cert certbot to do certification only
 
 if [[ $# == 0 ]] || [[ $# -gt 2 ]];then # $#: parameter number
 echo "usage:
-    To deploy: $0 deploy openssl/certbot
+    To install: $0 install openssl/certbot
     To start/stop/erase: $0 start/stop/erase
     To certificate:$0 cert certbot"
 exit 1
@@ -133,11 +130,14 @@ if [[ $# == 2 ]] && [[ $1 == "cert" ]];then
 fi
 
 
-# deploy web app using openssl/certbot via ./longscave.sh deploy certbot
-if [[ $# == 2 ]] && [[ $1 != "deploy" ]];then
-  echo "usage: longscave.sh deploy openssl/certbot"
+# install web app using openssl/certbot via ./longscave.sh install certbot
+if [[ $# == 2 ]] && [[ $1 != "install" ]];then
+  echo "usage: longscave.sh install openssl/certbot"
   exit 1
-elif [[ $# == 2 ]] && [[ $1 == "deploy" ]];then
+elif [[ $# == 2 ]] && [[ $1 == "install" ]];then
+current_time=$(date "+%Y%m%d-%H%M%S")
+exec 1>>/tmp/longscave-installation$current_time.log
+exec 2>>/tmp/longscave-installation$current_time.log
 myssl=$2
 if [[ $myssl == "openssl" ]] || [[ $myssl == "certbot" ]];then
   echo "encryption method: $myssl"
