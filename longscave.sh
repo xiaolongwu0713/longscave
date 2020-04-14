@@ -387,7 +387,7 @@ elif [ $myssl == "certbot" ];then
 	chmod a+xr /home/xiaowu
 	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
-	if [ ! -f "/etc/letsencrypt/live/longscave.top/fullchain.pem"];then
+	if [ ! -f "/etc/letsencrypt/live/longscave.top/fullchain.pem" ];then
 	  echo "certificate failed, clean up certification trace"
 	  mv -f /etc/nginx/conf.d/letencrypt.conf
 	nginx -s reload
@@ -416,16 +416,16 @@ if [ $? == 1 ];then
   echo "temporary password generated:" $temppass
   mysql --connect-expired-password  -hlocalhost -P3306 -uroot -p$temppass -e "alter user 'root'@'localhost' identified by '0okm(IJN890-'"
   	if [ $? == 1 ];then
-	  echo "failed, exit now"
-	  exit 1
-	  fi
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "uninstall plugin validate_password"
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "alter user 'root'@'localhost' identified by 'xiaowu'"
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create database longscave character set utf8 collate utf8_bin"
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create user 'longscave'@'localhost' identified by 'xiaowu'"
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "grant all privileges on longscave.* to 'longscave'@'localhost'"
-  mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
+      echo "root password already set. temporary password expired, alter password with temporary password failed"
+    fi
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "uninstall plugin validate_password"
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"0okm(IJN890-" -e "alter user 'root'@'localhost' identified by 'xiaowu'"
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create database longscave character set utf8 collate utf8_bin"
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "create user 'longscave'@'localhost' identified by 'xiaowu'"
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "grant all privileges on longscave.* to 'longscave'@'localhost'"
+    mysql --connect-expired-password -hlocalhost -P3306 -uroot -p"xiaowu" -e "flush privileges"
+
   # database migration
   echo "flask db upgrade"
   cd /home/xiaowu/longscave || exit
