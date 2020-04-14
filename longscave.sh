@@ -1,6 +1,7 @@
 #！/bin/bash
-exec 1>>/tmp/longscave.log
-exec 2>>/tmp/longscave.log
+current_time=$(date "+%Y%m%d-%H%M%S")
+exec 1>>/tmp/longscave-installation$current_time.log
+exec 2>>/tmp/longscave-installation$current_time.log
 setenforce 0
 # usage: longscave.sh start/stop/erase
 # usage: longscave.sh deploy openssl/certbot (default is openssl)
@@ -14,7 +15,7 @@ exit 1
 fi
 
 # start/stop/erase web app
-# start/stop/erase web app
+# usage: ./longscave start/stop/erase
 if [[ $# == 1 ]];then
   if [[ $1 == "start" ]]  || [[ $1 == "stop" ]] || [[ $1 == "erase" ]];then
   echo "$1" longscave
@@ -125,7 +126,7 @@ if [[ $# == 2 ]] && [[ $1 == "cert" ]];then
 	  fi
 	chmod a+xr /home/xiaowu
 	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
-	current_time=$(date "+%Y.%m.%d-%H.%M.%S")
+	current_time=$(date "+%Y%m%d-%H%M%S")
 	mv /etc/nginx/conf.d/openssl.conf /tmp/openssl.conf.bak.$current_time
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
 	nginx -s reload
@@ -351,7 +352,7 @@ if [ $? == 1 ];then
 	  exit 1
 	  fi
 fi
-current_time=$(date "+%Y%m%d%H%M%S")
+current_time=$(date "+%Y%m%d-%H%M%S")
 mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak.$current_time
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak.$current_time
 cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
