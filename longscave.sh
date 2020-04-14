@@ -61,8 +61,9 @@ fi
 
 if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
   current_time=$(date "+%Y%m%d-%H%M%S")
-  exec 1>>/tmp/longscave-erase-$current_time.log
-  exec 2>>/tmp/longscave-erase-$current_time.log
+  exec 1> >(tee -a /tmp/longscave-erase-$current_time.log)
+  exec 2> >(tee -a /tmp/longscave-erase-$current_time.log)
+
   # delete user 'xiaowu'
   echo "keep user xiaowu"
 
@@ -133,13 +134,10 @@ fi
 
 
 # install web app using openssl/certbot via ./longscave.sh install certbot
-if [[ $# == 2 ]] && [[ $1 != "install" ]];then
-  echo "usage: longscave.sh install openssl/certbot"
-  exit 1
-elif [[ $# == 2 ]] && [[ $1 == "install" ]];then
-current_time=$(date "+%Y%m%d-%H%M%S")
-exec 1>>/tmp/longscave-installation$current_time.log
-exec 2>>/tmp/longscave-installation$current_time.log
+if [[ $# == 2 ]] && [[ $1 == "install" ]];then
+  current_time=$(date "+%Y%m%d-%H%M%S")
+  exec 1> >(tee -a /tmp/longscave-install-$current_time.log)
+  exec 2> >(tee -a /tmp/longscave-install-$current_time.log)
 myssl=$2
 if [[ $myssl == "openssl" ]] || [[ $myssl == "certbot" ]];then
   echo "encryption method: $myssl"
