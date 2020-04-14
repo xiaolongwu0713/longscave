@@ -4,6 +4,7 @@ exec 2>>/tmp/longscave.log
 setenforce 0
 # usage: longscave.sh start/stop/erase
 # usage: longscave.sh deploy openssl/certbot (default is openssl)
+# usage: longscave.sh cert certbot to do certification only
 
 if [[ $# == 0 ]] || [[ $# -gt 2 ]];then # $#: parameter number
 echo "usage:
@@ -78,15 +79,15 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
   echo "keep temp contents under /tmp"
 
   # use nginx default configuration
-  echo "use default nginx configuration"
-  rm -f /etc/nginx/nginx.conf
-  rm -f /etc/nginx/conf.d/letencrypt.conf
-  rm -f /etc/nginx/conf.d/openssl.conf
-  mv /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
-  mv /etc/nginx/conf.d/default.conf.bak /etc/nginx/conf.d/default.conf
-
+  echo "erase nginx and all config files"
+  #rm -f /etc/nginx/nginx.conf
+  #rm -f /etc/nginx/conf.d/letencrypt.conf
+  #rm -f /etc/nginx/conf.d/openssl.conf
+  #mv /etc/nginx/nginx.conf.bak /etc/nginx/nginx.conf
+  #mv /etc/nginx/conf.d/default.conf.bak /etc/nginx/conf.d/default.conf
   systemctl stop nginx
-  systemctl start nginx
+  rpm -qa | grep nginx | grep -v noarch | xargs rpm -e
+  rm -rf /etc/nginx
 
   # delete letencryption output
   rm -rf /etc/letsencrypt/live/longscave.top/*
@@ -96,25 +97,21 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
   /usr/python/venv/longscave/bin/supervisorctl stop longscave
   # stop supervisord
   echo "stop supervisord deamon"
-  ps -elf | grep supervisord | grep -v 'grep' | awk '{print $4}'
+  thispid=`ps -elf | grep supervisord | grep -v 'grep' | awk '{print $4}'`
+  kill -9 $thispid
   netstat -ntpl | grep 8000
   if [ $? == 1 ];then
     echo "web app stopped successfully"
   fi
 
   # erase mysql repo, but keep mysql package
-  echo "uninstall mysql repo"
-  rpm -aq | grep mysql | grep noarch | xargs yum erase -y -q
-  echo "keep mysql package"
-
-  # clean up mysql data
-  echo "keep mysql data"
-  #systemctl start mysqld
-  #mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "select count(*) from longscave.user"
-
   echo "stop mysqld"
   systemctl stop mysqld
-
+  echo "erase mysql repo"
+  rpm -aq | grep mysql | grep noarch | xargs yum erase -y -q
+  echo "erase mysql package"
+  rpm -qa | grep mysql-community-server | xargs rpm -e
+  #mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "select count(*) from longscave.user"
 fi
 
  # certificate
@@ -215,7 +212,6 @@ if [ $pyversion == 3 ];then
 fi
 
 
-
 if [ ! -f /usr/python/venv/longscave/bin/activate ];then
 ## python vertirtual env
 	echo "creating python venv env at /usr/python/venv/longscave"
@@ -227,35 +223,35 @@ else
 fi
 
 
-if [ ! -d "/home/xiaowu/longscave/app" ];then
-	## get git repo
-	echo "git clone longscave from GitHub"
-	yum -y -q install git
-	cd /home/xiaowu || exit
-	git clone https://github.com/xiaolongwu1987/longscave.git
-		if [ $? == 1 ];then
-	  echo "failed, exit now"
-	  exit 1
-	  fi
-	#mv microblog longscave
-	cd longscave || exit
-	source /usr/python/venv/longscave/bin/activate
-	echo "pip install requirements"
-	pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
-		if [ $? == 1 ];then
-	  echo "failed, exit now"
-	  exit 1
-	  fi
-	echo "pip install pymysql gunicorn"
-	pip install pymysql gunicorn
-		if [ $? == 1 ];then
-	  echo "failed, exit now"
-	  exit 1
-	  fi
-	chown xiaowu:xiaowu -R /home/xiaowu/longscave
-else
-	echo "git repository longscave exists"
+if [ -d "/home/xiaowu/longscave" ];then
+  rm -rf /home/xiaowu/longscave
 fi
+## get git repo
+echo "git clone longscave from GitHub"
+yum -y -q install git
+cd /home/xiaowu || exit
+git clone https://github.com/xiaolongwu1987/longscave.git
+  if [ $? == 1 ];then
+  echo "failed, exit now"
+  exit 1
+  fi
+#mv microblog longscave
+cd longscave || exit
+source /usr/python/venv/longscave/bin/activate
+echo "pip install requirements"
+pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+  if [ $? == 1 ];then
+  echo "failed, exit now"
+  exit 1
+  fi
+echo "pip install pymysql gunicorn"
+pip install pymysql gunicorn
+  if [ $? == 1 ];then
+  echo "failed, exit now"
+  exit 1
+  fi
+chown xiaowu:xiaowu -R /home/xiaowu/longscave
+
 
 
 # install guess_language package
@@ -268,6 +264,7 @@ yum install -y -q bzip2
 	  echo "failed, exit now"
 	  exit 1
 	  fi
+rm -rf /tmp/guess_languagetmp/
 mkdir /tmp/guess_languagetmp/
 cd /tmp/guess_languagetmp || exit
 wget https://files.pythonhosted.org/packages/8b/4f/9ed0280b24e9e6875c3870a97659d0106a14e36db0d7d65c5277066fc7d0/guess_language-spirit-0.5.3.tar.bz2
@@ -346,7 +343,7 @@ fi
 #install nginx
 rpm -qa | grep nginx | grep -v noarch
 if [ $? == 1 ];then
-	echo "installing nginx"
+	echo "installing nginx ...."
 	yum localinstall -y -q /home/xiaowu/longscave/packages/nginx-release-centos-7-0.el7.ngx.noarch.rpm
 	yum install -y -q nginx
 		if [ $? == 1 ];then
@@ -354,8 +351,9 @@ if [ $? == 1 ];then
 	  exit 1
 	  fi
 fi
-mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
-mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+current_time=$(date "+%Y%m%d%H%M%S")
+mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak.$current_time
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak.$current_time
 cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
 # restart nginx, or certbot will fail
 systemctl stop nginx
@@ -363,8 +361,8 @@ systemctl start nginx
 
 # ssl configuration
 #openssl dhparam -out /home/xiaowu/longscave/cert/dhparam.pem 2048
+rm -rf /tmp/cert
 mkdir /tmp/cert
-rm -f /tmp/cert/*
 if [ $myssl == "openssl" ];then
 	printf 'CN\nshanghai\nSH\nLong\nLong\nlongscave\nxiaolongwu1987@sin.com\n' | openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout /tmp/cert/key.pem -out /tmp/cert/cert.pem
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
@@ -407,7 +405,9 @@ yum --disablerepo=mysql80-community --enablerepo=mysql57-community install -y -q
 	  fi
 fi
 
-service mysqld start
+#service mysqld start
+systemctl start mysqld
+
 mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "select count(*) from longscave.user"
 if [ $? == 1 ];then
   echo "initiate mysql database"
