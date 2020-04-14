@@ -8,7 +8,7 @@ if [[ $# == 0 ]] || [[ $# -gt 2 ]];then # $#: parameter number
 echo "usage:
     To install: $0 install openssl/certbot
     To start/stop/erase: $0 start/stop/erase
-    To certificate:$0 cert certbot"
+    To certificate with certbot after install with openssl:$0 cert certbot"
 exit 1
 fi
 
@@ -102,6 +102,8 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
   fi
 
   # erase mysql repo, but keep mysql package
+  echo "drop database longscave"
+  mysql --connect-expired-password  -hlocalhost -P3306 -uroot -pxiaowu -e "drop database longscave"
   echo "stop mysqld"
   systemctl stop mysqld
   echo "erase mysql repo"
@@ -253,7 +255,6 @@ pip install pymysql gunicorn
 chown xiaowu:xiaowu -R /home/xiaowu/longscave
 
 
-
 # install guess_language package
 source /usr/python/venv/longscave/bin/activate
 pip freeze | grep guess-language
@@ -388,6 +389,9 @@ elif [ $myssl == "certbot" ];then
 	chmod a+xr /home/xiaowu
 	printf 'xiaolongwu1987@sina.com\nA\nN\n' | certbot certonly --webroot -w /tmp/cert -d longscave.top,www.longscave.top
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
+	if [ ! -f "/etc/letsencrypt/live/longscave.top/fullchain.pem"];then
+	  echo "certificate failed, clean up certification trace"
+	  mv -f /etc/nginx/conf.d/letencrypt.conf
 	nginx -s reload
 fi	
 
@@ -404,7 +408,6 @@ yum --disablerepo=mysql80-community --enablerepo=mysql57-community install -y -q
 	  exit 1
 	  fi
 fi
-
 #service mysqld start
 systemctl start mysqld
 
