@@ -367,6 +367,9 @@ if [ $myssl == "openssl" ];then
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
 	nginx -s reload
 elif [ $myssl == "certbot" ];then
+  if [ -d "/etc/letsencrypt/live/longscave.top" ];then
+    rm -rf /etc/letsencrypt/live/longscave.top
+  fi
   # install certbot, some file need to change python to python.bak
   yum -y install yum-utils
   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
