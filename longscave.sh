@@ -136,7 +136,7 @@ if [[ $# == 2 ]] && [[ $1 == "cert" ]];then
 fi
 
 
-# deploy web app using openssl/certbot
+# deploy web app using openssl/certbot via ./longscave.sh deploy certbot
 if [[ $# == 2 ]] && [[ $1 != "deploy" ]];then
   echo "usage: longscave.sh deploy openssl/certbot"
   exit 1
@@ -188,7 +188,7 @@ if [ $pyversion == 2 ];then
 	# TODO: quite configure
 	./configure --prefix=/usr/python --enable-loadable-sqlite-extensions --enable-optimizations --with-ssl
 	# TODO: quite make and install
-	make && make install
+	make  -s && make install
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
 	  exit 1
@@ -341,7 +341,6 @@ if [ $? == 1 ]; then
 	fi
 elif [ $? == 0 ];then
 	echo "Already running"
-
 fi
 
 #install nginx
@@ -371,9 +370,18 @@ if [ $myssl == "openssl" ];then
 	cp /home/xiaowu/longscave/nginxconf/openssl.conf /etc/nginx/conf.d/
 	nginx -s reload
 elif [ $myssl == "certbot" ];then
+  # install certbot, some file need to change python to python.bak
   yum -y install yum-utils
   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  grep python.bak /usr/bin/yum-config-manager
+	if [ $?  == 1 ];then
+	  sed -l 1 -i "s/python/python.bak/g" /usr/bin/yum-config-manager
+	fi
   yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
+  grep python.bak /sbin/semanage
+	if [ $?  == 1 ];then
+	  sed -l 1 -i "s/python/python.bak/g" /sbin/semanage
+	fi
 	yum install -y -q certbot python2-certbot-nginx
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
@@ -427,5 +435,4 @@ if [ $? == 1 ];then
   flask db upgrade
 fi
 #open https:ip to verify the result.
-
 fi
