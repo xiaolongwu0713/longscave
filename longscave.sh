@@ -235,6 +235,7 @@ git clone https://github.com/xiaolongwu1987/longscave.git
   echo "failed, exit now"
   exit 1
   fi
+chown -R xiaowu:xiaowu /home/xiaowu/longscave
 #mv microblog longscave
 cd longscave || exit
 source /usr/python/venv/longscave/bin/activate
