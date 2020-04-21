@@ -1,0 +1,58 @@
+
+#@bp.route('/show_qr/<product>/<int:amount>', methods=['GET','POST'])
+def preCreateOrder(product, out_trade_no, total_amount):
+    '''
+    创建预付订单
+    :return None：表示预付订单创建失败  [或]  code_url：二维码url
+    '''
+    out_trade_no_time = int(time.time())
+    out_trade_no = str(product) + out_trade_no_time
+    subject = product
+    result = init_alipay_cfg().api_alipay_trade_precreate(
+        subject=product,
+        out_trade_no=out_trade_no,
+        total_amount=total_amount)
+    print('返回值：', result)
+    code_url = result.get('qr_code')
+    if not code_url:
+        print(result.get('预付订单创建失败：', 'msg'))
+        return
+    else:
+        get_qr_code(code_url, subject, out_trade_no)
+        # return code_url
+
+
+
+
+@bp.route('/query_order1/', methods=['GET','POST'])
+def query_order1(cancel_time = 10):
+    '''
+    :param out_trade_no: 商户订单号
+    :return: None
+    '''
+    cancel_time = int(current_app.config['CANCEL_TIME'])
+    out_trade_no = request.form['out_trade_no']
+    env = request.form['env']
+    print('预付订单已创建,请在%s秒内扫码支付,过期订单将被取消！' % cancel_time)
+    # check order status
+    _time = 0
+    looptime = int(cancel_time/2)
+    print(env)
+    print(out_trade_no)
+    for i in range(looptime):
+        print("now sleep 2s")
+        time.sleep(2)
+        result = init_alipay_cfg(env).api_alipay_trade_query(out_trade_no=out_trade_no)
+        #if result.get("trade_status", "") == "TRADE_SUCCESS":
+        if result.get("trade_status") == "TRADE_SUCCESS":
+            print('订单已支付!')
+            print('订单查询返回值：', result)
+            return 'paied'
+        _time += 2
+        if _time >= cancel_time:
+            if result.get("trade_status") == "WAIT_BUYER_PAY":
+                print("timeout and unpaied, cancel the order now...")
+                a = cancel_order(out_trade_no, env)
+                print(a)
+                return "canceled"
+

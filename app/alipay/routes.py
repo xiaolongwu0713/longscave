@@ -1,6 +1,7 @@
 from alipay import AliPay
 from app.alipay.forms import queryorderform
-import time, qrcode
+import time
+import qrcode
 import os
 from flask import Flask, render_template, current_app, request
 import flask
@@ -14,19 +15,14 @@ def timer():
     return render_template('/alipay/timer.html')
 
 
-@bp.route('/pay_success', methods=['GET', 'POST'])
+@bp.route('/success', methods=['GET', 'POST'])
 def pay_success():
-    return render_template('/alipay/pay_success.html')
+    return render_template('/alipay/pay_result_success.html')
 
 
-@bp.route('/queryorder', methods=['GET', 'POST'])
-def queryorder():
-    form = queryorderform()
-    if form.validate_on_submit():
-        trade_number = form.order_number.data
-        result = init_alipay_cfg().api_alipay_trade_query(out_trade_no=trade_number)
-        return render_template('/alipay/queryorder.html',  form=form, result=result)
-    return render_template('/alipay/queryorder.html',  form=form)
+@bp.route('/timeout', methods=['GET', 'POST'])
+def timeout():
+    return render_template('/alipay/pay_result_timeout.html')
 
 
 @bp.route('/canceled', methods=['GET', 'POST'])
@@ -34,12 +30,12 @@ def canceled():
     return render_template('/alipay/canceled.html')
 
 
-def init_alipay_cfg():
+def init_alipay_cfg(env):
     '''
     初始化alipay配置
     :return: alipay 对象
     '''
-    env = "prd"
+    env = env
     if env == "prd":
         alipay = AliPay(
             appid=current_app.config['APP_ID_PRD'],
@@ -61,18 +57,27 @@ def init_alipay_cfg():
     return alipay
 
 
-@bp.route('/show_qr/<product>/<int:amount>', methods=['GET','POST'])
-def show_qr(product, amount):
-# @bp.route('/show_qr', methods=['GET','POST'])
-# def show_qr():
-    #product = 'thing1111'
-    #amount = 10.00
+@bp.route('/show_qr/<env>/<product>/<int:amount>', methods=['GET','POST'])
+def show_qr(env, product, amount):
     subject = product
     amount = amount
+    env = env
+    qrcode_file_name, out_trade_no = qr_generator(env, product, amount)
+    if env == 'test':
+        return render_template('alipay/show_qr_test.html', subject=subject, amount=amount, qrcode_file_name=qrcode_file_name, env=env, out_trade_no=out_trade_no)
+    elif env == 'prd':
+        return render_template('alipay/show_qr_prd.html', subject=subject, amount=amount, qrcode_file_name=qrcode_file_name, env=env, out_trade_no=out_trade_no)
+
+
+def qr_generator(env, product, amount):
+# @bp.route('/show_qr', methods=['GET','POST'])
+    subject = product
+    amount = amount
+    env = env
     out_trade_no_time = int(time.time())
     out_trade_no = str(product) + str(out_trade_no_time)
 
-    myalipay = init_alipay_cfg()
+    myalipay = init_alipay_cfg(env)
     result = myalipay.api_alipay_trade_precreate(
         subject=product,
         out_trade_no=out_trade_no,
@@ -84,18 +89,26 @@ def show_qr(product, amount):
         print(result.get('预付订单创建失败：', 'msg'))
         return "failed to connect to Alipay server"
     else:
-        qrcode_url = get_qr_code(code_url, subject, out_trade_no)
-        qrcode_file_name = os.path.basename(qrcode_url)
+        qrcode_img = qr_img_generator(code_url, subject, out_trade_no, env)
+        filename = str("qrcodeimg") + str(env) + str(subject) + str(out_trade_no) + str(".png")
+        if env == 'prd':
+            outputfile = os.path.join(os.getcwd(), 'app/static/img/alipay_qr/prd/', filename)
+        elif env == 'test':
+            outputfile = os.path.join(os.getcwd(), 'app/static/img/alipay_qr/test/', filename)
+        qrcode_img.save(outputfile)
+        print('二维码保存成功！')
+        qrcode_file_name = os.path.basename(outputfile)
         # return code_url
-    return render_template('alipay/show_qr.html', out_trade_no = out_trade_no, subject = subject, amount = amount, qrcode_file_name=qrcode_file_name)
+    return qrcode_file_name, out_trade_no
 
 
-def get_qr_code(code_url, subject, out_trade_no):
+def qr_img_generator(code_url, subject, out_trade_no, env):
     '''
     生成二维码
     :return None
     '''
     # print(code_url)
+    env = env
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -104,102 +117,57 @@ def get_qr_code(code_url, subject, out_trade_no):
     )
     qr.add_data(code_url)  # 二维码所含信息
     img = qr.make_image()  # 生成二维码图片
-    filename = str("qrcodeimg") + str(subject) + str(out_trade_no) + str(".png")
-    outputfile = os.path.join(os.getcwd(), 'app/static/img/alipay_qr/', filename)
-    img.save(outputfile)
-    print('二维码保存成功！')
-    return outputfile
-
-#@bp.route('/show_qr/<product>/<int:amount>', methods=['GET','POST'])
-def preCreateOrder(product, out_trade_no, total_amount):
-    '''
-    创建预付订单
-    :return None：表示预付订单创建失败  [或]  code_url：二维码url
-    '''
-    out_trade_no_time = int(time.time())
-    out_trade_no = str(product) + out_trade_no_time
-    subject = product
-    result = init_alipay_cfg().api_alipay_trade_precreate(
-        subject=product,
-        out_trade_no=out_trade_no,
-        total_amount=total_amount)
-    print('返回值：', result)
-    code_url = result.get('qr_code')
-    if not code_url:
-        print(result.get('预付订单创建失败：', 'msg'))
-        return
-    else:
-        get_qr_code(code_url, subject, out_trade_no)
-        # return code_url
-
-
-@bp.route('/query_order1/', methods=['GET','POST'])
-def query_order1(cancel_time = 10):
-    '''
-    :param out_trade_no: 商户订单号
-    :return: None
-    '''
-    cancel_time = int(current_app.config['CANCEL_TIME'])
-    out_trade_no = request.form['out_trade_no']
-    print('预付订单已创建,请在%s秒内扫码支付,过期订单将被取消！' % cancel_time)
-    # check order status
-    _time = 0
-    looptime = int(cancel_time/2)
-    for i in range(looptime):
-        print("now sleep 2s")
-        time.sleep(2)
-        result = init_alipay_cfg().api_alipay_trade_query(out_trade_no=out_trade_no)
-        if result.get("trade_status", "") == "TRADE_SUCCESS":
-            print('订单已支付!')
-            print('订单查询返回值：', result)
-            return 'paied'
-        _time += 2
-        if _time >= cancel_time:
-            a=cancel_order(out_trade_no)
-            print(a)
-            return "canceled"
+    return img
 
 
 @bp.route('/query_order/', methods=['GET','POST'])
-@bp.route('/query_order/<out_trade_no>', methods=['GET','POST'])
-def query_order(out_trade_no, cancel_time = 10):
-    '''
-    :param out_trade_no: 商户订单号
-    :return: None
-    '''
-    out_trade_no = request.form['out_trade_no']
-    print('预付订单已创建,请在%s秒内扫码支付,过期订单将被取消！' % cancel_time)
-    # check order status
-    _time = 0
-    looptime = int(cancel_time/2)
-    for i in range(looptime):
-        print("now sleep 2s")
+def query_order():
+    #env = env
+    out_trade_no = str(request.form['out_trade_no'])
+    env = str(request.form['env'])
+    print(env)
+    print(out_trade_no)
+    for i in range(15):
+        print ("sleep 2 secs")
         time.sleep(2)
+        result = init_alipay_cfg(env).api_alipay_trade_query(out_trade_no=out_trade_no)
+        print(result)
+        if result.get("code") == "40004" and result.get("sub_code") == "ACQ.TRADE_NOT_EXIST":
+            print('trade not exist!')
+            print('Please scan QR image')
+            #return 'canceled'
+        elif result.get("code") == "10000" and result.get("trade_status") == "WAIT_BUYER_PAY":
+            print("Waiting to pay.....")
+        elif result.get("code") == "10000" and result.get("trade_status") == "TRADE_SUCCESS":
+            print('Order paied!')
+            print('order status：', result)
+            return 'paied'
+    print("time out")
+    cancel_order(out_trade_no, env)
+    return 'timeout'
 
-        result = init_alipay_cfg().api_alipay_trade_query(out_trade_no=out_trade_no)
-        if result.get("trade_status", "") == "TRADE_SUCCESS":
-            print('订单已支付!')
-            print('订单查询返回值：', result)
-            return "paied"
 
-        _time += 2
-        if _time >= cancel_time:
-            a = cancel_order(out_trade_no)
-            if a == 1:
-                print("order canceled successfully")
-            elif a == 2:
-                print("order canceled failed")
-            return "canceled"
+@bp.route('/test_query_order/', methods=['GET','POST'])
+def test_query_order():
+    out_trade_no = str(request.form['out_trade_no'])
+    env = str(request.form['env'])
+    print(env)
+    print(out_trade_no)
+    for i in range(30):
+        print("sleep 2 seconds")
+        time.sleep(2)
+        result = init_alipay_cfg(env).api_alipay_trade_query(out_trade_no=out_trade_no)
+        print(result)
 
 
-def cancel_order(out_trade_no):
-    '''
+def cancel_order(out_trade_no, env):
+    """
     撤销订单
     :param out_trade_no:
     :param cancel_time: 撤销前的等待时间(若未支付)，撤销后在商家中心-交易下的交易状态显示为"关闭"
     :return:
-    '''
-    result = init_alipay_cfg().api_alipay_trade_cancel(out_trade_no=out_trade_no)
+    """
+    result = init_alipay_cfg(env).api_alipay_trade_cancel(out_trade_no=out_trade_no)
     print('取消订单返回值：', result)
     resp_state = result.get('msg')
     # print(resp_state)
@@ -220,13 +188,13 @@ def cancel_order(out_trade_no):
 
 
 def need_refund(out_trade_no, refund_amount, out_request_no):
-    '''
+    """
     退款操作
     :param out_trade_no: 商户订单号
     :param refund_amount: 退款金额，小于等于订单金额
     :param out_request_no: 商户自定义参数，用来标识该次退款请求的唯一性,可使用 out_trade_no_退款金额*100 的构造方式
     :return:
-    '''
+    """
     result = init_alipay_cfg().api_alipay_trade_refund(out_trade_no=out_trade_no,
                                                        refund_amount=refund_amount,
                                                        out_request_no=out_request_no)
@@ -238,12 +206,12 @@ def need_refund(out_trade_no, refund_amount, out_request_no):
 
 
 def refund_query(out_request_no, out_trade_no):
-    '''
+    """
     退款查询：同一笔交易可能有多次退款操作（每次退一部分）
     :param out_request_no: 商户自定义的单次退款请求标识符
     :param out_trade_no: 商户订单号
     :return:
-    '''
+    """
     result = init_alipay_cfg().api_alipay_trade_fastpay_refund_query(out_request_no, out_trade_no=out_trade_no)
 
     if result["code"] == "10000":

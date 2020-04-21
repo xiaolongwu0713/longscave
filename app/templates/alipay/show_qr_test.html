@@ -1,0 +1,67 @@
+{% extends 'bootstrap/base.html' %}
+{% include '/common/head-block.html' %}
+{% block body %}
+<!-- navbar-->
+{% include '/common/navbar-block-visitor.html' %}
+{% include '/common/flash-msg-block.html' %}
+<div align="center">
+  <h1> Sandbox environment </h1>
+  <h1>Scan QR code to pay</h1>
+  <p>Trade no. : {{ out_trade_no }}</p>
+  <img style="width:1%, height:1%" class="img-responsive" id="qr_image_test" src="/static/img/alipay_qr/test/{{ qrcode_file_name }}">
+</div>
+<div align="center">
+<p class="text-wrap" style="font-size:50px; text-align:center;"  id="timer"></p>
+</div>
+
+{% include 'common/footer.html' %}
+<!-- JavaScript files-->
+{% include 'common/js-block.html' %}
+<script type="text/javascript">
+function countdown() {
+var secondsleft = 60;
+setInterval(function() {
+document.getElementById("timer").innerHTML = secondsleft + "s";
+secondsleft=secondsleft - 1;
+}, 1000);
+};
+countdown();
+
+//method 4
+function isImgReady(imgId, callback) {
+var timer = setInterval(function() {
+    if (imgId.complete) {
+        callback(imgId)
+        clearInterval(timer)
+    }
+}, 50)
+}
+
+isImgReady(qr_image_test, function() {
+    console.log("method 4 ready")
+    var out_trade_no = "{{ out_trade_no }}"
+    var env = "{{ env }}"
+    $.ajax({
+      url : '/alipay/query_order/',
+      data : {'out_trade_no':out_trade_no, 'env':env},
+      type : 'POST',
+      success: function(retdata){
+          if (retdata=="canceled") {
+          window.location.href = "/alipay/canceled"
+           }
+           else if (retdata=="paied") {
+          window.location.href = "/alipay/success"
+           }
+           else if (retdata=="timeout") {
+          window.location.href = "/alipay/timeout"
+           }
+           },
+      error: function(retdata){
+        alert(retdata);
+      }
+      })
+})
+
+
+</script>
+{% endblock body %}

@@ -37,3 +37,9 @@ class Config(object):
     ALIPAY_PUBLIC_KEY_PATH_PRD = os.path.join(os.getcwd(), 'app/alipay/pem/pem_prd', 'alipay_public_key.pem')
     APP_PRIVATE_KEY_PATH_PRD = os.path.join(os.getcwd(), 'app/alipay/pem/pem_prd', 'app_private_key.pem')
 
+    # Flask-User settings
+    USER_APP_NAME = ""      # Shown in and email templates and page footers
+    USER_ENABLE_EMAIL = False        # Enable email authentication
+    USER_ENABLE_USERNAME = True    # Disable username authentication
+    USER_EMAIL_SENDER_NAME = USER_APP_NAME
+    USER_EMAIL_SENDER_EMAIL = "noreply@example.com"

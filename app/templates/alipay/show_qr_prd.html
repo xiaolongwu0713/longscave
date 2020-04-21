@@ -5,9 +5,10 @@
 {% include '/common/navbar-block-visitor.html' %}
 {% include '/common/flash-msg-block.html' %}
 <div align="center">
+  <h1> Production environment </h1>
   <h1>请使用支付宝扫码付款</h1>
   <p>订单编号: {{ out_trade_no }}</p>
-  <img style="width:20%, height:20%" class="img-responsive" id="qr_image" src="/static/img/alipay_qr/{{ qrcode_file_name }}">
+  <img style="width:20%, height:20%" class="img-responsive" id="qr_image_prd" src="/static/img/alipay_qr/prd/{{ qrcode_file_name }}">
 </div>
 <div align="center">
 <p class="text-wrap" style="font-size:50px; text-align:center;"  id="timer"></p>
@@ -28,31 +29,41 @@ secondsleft=secondsleft - 1;
 countdown();
 console.log("haha1")
 
-$(document).ready(function(){
-  console.log("haha2")
-  // $("img").on("load",function(){
-  // #qr_image failed to trigger the function, don't know why
-  $("#qr_image").on("load",function(){
-    console.log("haha")
+
+//method 4
+function isImgReady(imgId, callback) {
+var timer = setInterval(function() {
+    if (imgId.complete) {
+        callback(imgId)
+        clearInterval(timer)
+    }
+}, 50)
+}
+
+isImgReady(qr_image_test, function() {
+    console.log("method 4 ready")
     var out_trade_no = "{{ out_trade_no }}"
+    var env = "{{ env }}"
     $.ajax({
-      url : '/alipay/query_order1/',
-      data : {out_trade_no:out_trade_no},
+      url : '/alipay/query_order/',
+      data : {'out_trade_no':out_trade_no, 'env':env},
       type : 'POST',
       success: function(retdata){
           if (retdata=="canceled") {
           window.location.href = "/alipay/canceled"
            }
            else if (retdata=="paied") {
-          window.location.href = "/alipay/pay_success"
+          window.location.href = "/alipay/success"
+           }
+           else if (retdata=="timeout") {
+          window.location.href = "/alipay/timeout"
            }
            },
       error: function(retdata){
         alert(retdata);
       }
-    });
-  });
-});
+      })
+})
 
 </script>
 {% endblock body %}

@@ -1,0 +1,12 @@
+qrcode image generated correctly, however when query order status, give error:
+{'code': '40004', 'msg': 'Business Failed', 'sub_code': 'ACQ.TRADE_NOT_EXIST', 'sub_msg': '交易不存在', 'buyer_pay_amount': '0.00', 'invoice_amount': '0.00', 'out_trade_no': 'testAlipay1587141169', 'point_amount': '0.00', 'receipt_amount': '0.00'}
+trade not exist!
+
+showcase: run app.  courses-->click sandbox(10RMB) button
+
+2020/04/18
+result contents and attribute changes according to the order status. query the trade_status attibute will fail before user scan the QR code because trade_status
+attribute not exists until after user scan the QR code.
+
+however, query still raise "KeyError: 'alipay_trade_query_response'" when query the out_trade_no at the moment of scanning the QR code, and it will success a second
+try.

@@ -88,8 +88,11 @@ followers = db.Table(
 )
 
 
-class User(UserMixin, PaginatedAPIMixin, db.Model):
+class User( db.Model, UserMixin, PaginatedAPIMixin):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+    # Relationships
+    roles = db.relationship('Role', secondary='user_role')
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
@@ -228,6 +231,10 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     def revoke_token(self):
         self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
 
+
+    def get_user_by_token(self):
+        pass
+
     @staticmethod
     def check_token(token):
         user = User.query.filter_by(token=token).first()
@@ -239,6 +246,20 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+# Define the Role data-model
+class Role(db.Model):
+    __tablename__ = 'role'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+
+# Define the UserRoles association table
+class UserRoles(db.Model):
+    __tablename__ = 'user_role'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(), db.ForeignKey('role.id', ondelete='CASCADE'))
 
 
 class Post(SearchableMixin, db.Model):

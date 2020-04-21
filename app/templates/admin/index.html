@@ -1,3 +1,4 @@
+{% import 'bootstrap/wtf.html' as wtf %}
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
@@ -11,7 +12,7 @@
 {% include '/common/sidenavbar-block.html' %}
 <div class="page">
     <!-- navbar-->
-    {% include '/common/navbar-block.html' %}
+    {% include '/common/navbar-block-admin.html' %}
     <!-- Counts Section -->
     <section class="dashboard-counts section-padding">
         <div class="container-fluid">
@@ -71,6 +72,24 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    {{ wtf.quick_form(form) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    {{ result }}
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <input type="checkbox" class='toggle' checked data-toggle="toggle">
+            <div class='status' id="alipay-env"><test></test></div>
         </div>
     </section>
     <!-- Header Section-->
@@ -416,4 +435,20 @@
 </div>
 <!-- JavaScript files-->
 {% include 'common/js-block.html' %}
+
+<script>
+  $(document).ready(function() {
+   $('.toggle').click(function() {
+      var current_status = $('.status').text();
+      if (current_status === 'Untoggled'){
+         $('.status').html('Toggled');
+      }
+      else{
+        $('.status').html('Untoggled');
+      }
+
+    });
+   });
+ </script>
+
 {% endblock body %}

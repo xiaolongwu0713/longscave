@@ -19,8 +19,9 @@
                 <li>list item</li>
             </ul>
 <!--            TODO: pass the amount and product name as parameter to routes function.-->
-            <a href="{{ url_for('alipay.show_qr', product='thing', amount='10') }}" class="btn btn-primary btn-lg" >支付宝购买(30元)</a>
-            {#<a href="" class="btn btn-primary btn-lg" >支付宝购买(30元)</a> #}
+            <a href="{{ url_for('alipay.show_qr', product='prdthing', amount='10', env='prd') }}" class="btn btn-primary btn-lg" >Alipay(10RMB)</a>
+            <a href="{{ url_for('alipay.show_qr', product='testAlipay', amount='10', env='test') }}" class="btn btn-primary btn-lg" >sandbox(10RMB)</a>
+            {#<a href="" class="btn btn-primary btn-lg" >Alipay(30RMB)</a> #}
             <center>
                 <!-- TODO: Calendly link widget begin -->
                 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">

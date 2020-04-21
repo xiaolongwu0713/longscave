@@ -6,21 +6,29 @@ from flask_login import login_user, logout_user, current_user
 from flask_babel import _
 from app import db
 from app.admin import bp
+from app.alipay.forms import queryorderform
+from app.alipay.routes import init_alipay_cfg
 from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User
 from app.auth.email import send_password_reset_email
 from flask_login import current_user, login_required
+from flask_user import roles_required
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
+@roles_required('Admin')
 def index():
-    # flash('jump to main')
     #flash(current_user.username)
-    return render_template('admin/index.html')
+    form = queryorderform()
+    if form.validate_on_submit():
+        trade_number = form.order_number.data
+        env = form.env.data
+        result = init_alipay_cfg(env).api_alipay_trade_query(out_trade_no=trade_number)
+        return render_template('admin/index.html',  form=form, result=result)
+    return render_template('admin/index.html', form=form)
     # return '<title>我的第一个 HTML 页面</title>'
-    # return redirect(url_for('default.explore'))
 
 
 @bp.route('/aboutme', methods=['GET', 'POST'])
@@ -143,3 +151,15 @@ def deluser():
         #flash("deleted")
         mysqlconn.close()
     return jsonify('success')
+
+
+# online tool to check order status
+@bp.route('/query_alipay_order', methods=['GET', 'POST'])
+def query_alipay_order():
+    form = queryorderform()
+    if form.validate_on_submit():
+        trade_number = form.order_number.data
+        env = form.env.data
+        result = init_alipay_cfg(env).api_alipay_trade_query(out_trade_no=trade_number)
+        return render_template('/alipay/queryorder.html',  form=form, result=result)
+    return render_template('/alipay/queryorder.html',  form=form)
