@@ -18,7 +18,8 @@ from flask_user import roles_required
 
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
-@roles_required('Admin')
+#Flask_User and Flask_Login not working togather properly
+#@roles_required('Admin')
 def index():
     #flash(current_user.username)
     form = queryorderform()

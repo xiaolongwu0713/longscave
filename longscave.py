@@ -11,7 +11,8 @@ cli.register(app)
 Markdown(app)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 app.config['CKEDITOR_FILE_UPLOADER'] = 'main.upload'
-user_manager = UserManager(app, db, User)
+#enable blow will use flask_user to do auth work instead of flask_login
+#user_manager = UserManager(app, db, User)
 
 @app.shell_context_processor
 def make_shell_context():
