@@ -15,3 +15,6 @@ Two kinds of users:
 admin: xiaowu/xiaowu
 guest: other, such as: guest/guest
 
+two homepage:
+website homepage, 5000/index directed by visitor.index
+user homepage: user center
