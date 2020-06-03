@@ -41,6 +41,7 @@
     </div>
     <div>
         {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('main.index', username=current_user.username) }}">{{ _('UserCenter') }}</a></li>
         <ul class="navbar-nav">
         <li class="nav-item">
             <a href="{{ url_for('main.articleeditor') }}" class="nav-link button">
