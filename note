@@ -10,3 +10,7 @@ attribute not exists until after user scan the QR code.
 
 however, query still raise "KeyError: 'alipay_trade_query_response'" when query the out_trade_no at the moment of scanning the QR code, and it will success a second
 try.
+
+
+admin: xiaowu/xiaowu
+guest:guest/guest

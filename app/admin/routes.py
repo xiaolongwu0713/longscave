@@ -17,6 +17,7 @@ from flask_user import roles_required
 
 
 @bp.route('/', methods=['GET', 'POST'])
+@bp.route('/admin', methods=['GET', 'POST'])
 @login_required
 #Flask_User and Flask_Login not working togather properly
 #@roles_required('Admin')

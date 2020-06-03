@@ -28,6 +28,7 @@ def before_request():
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    username = current_user.username
     form = PostForm()
     if form.validate_on_submit():
         language = guess_language(form.post.data)
@@ -48,7 +49,7 @@ def index():
         if posts.has_prev else None
     return render_template('index.html', title=_('Home'), form=form,
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, username=username)
 
 
 @bp.route('/files/<path:filename>')
