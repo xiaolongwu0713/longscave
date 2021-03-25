@@ -374,18 +374,21 @@ elif [ $myssl == "certbot" ];then
   if [ -d "/etc/letsencrypt/live/longscave.top" ];then
     rm -rf /etc/letsencrypt/live/longscave.top
   fi
-  # install certbot, some file need to change python to python.bak
-  yum -y install yum-utils
+  # install certbot, some file need to change python to python.bak, certbot only work under python2
+  yum -y install yum-utils || true
   yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-  grep python.bak /usr/bin/yum-config-manager
-	if [ $?  == 1 ];then
-	  sed -l 1 -i "s/python/python.bak/g" /usr/bin/yum-config-manager
-	fi
   yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
-  grep python.bak /sbin/semanage
-	if [ $?  == 1 ];then
-	  sed -l 1 -i "s/python/python.bak/g" /sbin/semanage
-	fi
+  if [ $pyversion == 2 ];then
+    grep python.bak /usr/bin/yum-config-manager
+    if [ $?  == 1 ];then
+      sed -l 1 -i "s/python/python.bak/g" /usr/bin/yum-config-manager
+    fi
+
+    grep python.bak /sbin/semanage
+    if [ $?  == 1 ];then
+      sed -l 1 -i "s/python/python.bak/g" /sbin/semanage
+    fi
+  fi
 	yum install -y -q certbot python2-certbot-nginx
 		if [ $? == 1 ];then
 	  echo "failed, exit now"
