@@ -230,6 +230,7 @@ fi
 echo "git clone longscave from GitHub"
 yum -y -q install git
 cd /home/xiaowu || exit
+rm -rf /home/xiaowu/longscave
 git clone https://github.com/xiaolongwu1987/longscave.git
   if [ $? == 1 ];then
   echo "failed, exit now"
@@ -241,7 +242,7 @@ cd longscave || exit
 source /usr/local/venv/longscave/bin/activate
 echo "pip install requirements"
 #pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
-pip install -r requirements.txt  --trusted-host mirrors.aliyun.com
+pip install -r requirements.txt
   if [ $? == 1 ];then
   echo "failed, exit now"
   exit 1
