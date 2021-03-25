@@ -19,16 +19,16 @@ if [[ $# == 1 ]] && [[ $1 == "start" ]];then
   exec 1>>/tmp/longscave-start-$current_time.log
   exec 2>>/tmp/longscave-start-$current_time.log
   echo "start supervisord"
-  /usr/python/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
-  /usr/python/venv/longscave/bin/supervisorctl reload
+  /usr/local/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
+  /usr/local/venv/longscave/bin/supervisorctl reload
   echo "start longscave web app"
-  /usr/python/venv/longscave/bin/supervisorctl start longscave
+  /usr/local/venv/longscave/bin/supervisorctl start longscave
     echo "verifying......"
     netstat -tnpl | grep 8000
     if [ $? == 1 ]; then
       echo "starting longscave web app"
-      /usr/python/venv/longscave/bin/supervisorctl reload
-      /usr/python/venv/longscave/bin/supervisorctl start longscave
+      /usr/local/venv/longscave/bin/supervisorctl reload
+      /usr/local/venv/longscave/bin/supervisorctl start longscave
       netstat -ntpl | grep 8000
         if [ $? == 0 ];then
           echo "web app started successfully"
@@ -47,7 +47,7 @@ if [[ $# == 1 ]] && [[ $1 == "stop" ]];then
   exec 2>>/tmp/longscave-stop-$current_time.log
   # stop web app
   echo "stop longscave web app"
-  /usr/python/venv/longscave/bin/supervisorctl stop longscave
+  /usr/local/venv/longscave/bin/supervisorctl stop longscave
   # stop supervisord
   echo "stop supervisord deamon"
   ps -elf | grep supervisord | grep -v 'grep' | awk '{print $4}'
@@ -92,7 +92,7 @@ if [[ $# == 1 ]] && [[ $1 == "erase" ]];then
 
   # stop web app
   echo "stop longscave web app"
-  /usr/python/venv/longscave/bin/supervisorctl stop longscave
+  /usr/local/venv/longscave/bin/supervisorctl stop longscave
   # stop supervisord
   echo "stop supervisord deamon"
   thispid=`ps -elf | grep supervisord | grep -v 'grep' | awk '{print $4}'`
@@ -183,7 +183,7 @@ if [ $pyversion == 2 ];then
 	tar -zxvf Python-3.6.4.tgz
 	cd Python-3.6.4 || exit
 	# TODO: quite configure
-	./configure --prefix=/usr/python --enable-loadable-sqlite-extensions --enable-optimizations --with-ssl
+	./configure --prefix=/usr/local --enable-loadable-sqlite-extensions --enable-optimizations --with-ssl
 	# TODO: quite make and install
 	make  -s && make install
 		if [ $? == 1 ];then
@@ -195,8 +195,8 @@ if [ $pyversion == 2 ];then
 	echo "creating soft link"
 	mv /usr/bin/python /usr/bin/python.bak
 	mv /usr/bin/pip /usr/bin/pip.bak
-	ln -s /usr/python/bin/python3 /usr/bin/python
-	ln -s /usr/python/bin/pip3 /usr/bin/pip
+	ln -s /usr/local/bin/python3 /usr/bin/python
+	ln -s /usr/local/bin/pip3 /usr/bin/pip
 	grep python.bak /usr/bin/yum
 	if [ $?  == 1 ];then
 	  sed -l 1 -i "s/python/python.bak/g" /usr/bin/yum
@@ -212,12 +212,12 @@ if [ $pyversion == 3 ];then
 fi
 
 
-if [ ! -f /usr/python/venv/longscave/bin/activate ];then
+if [ ! -f /usr/local/venv/longscave/bin/activate ];then
 ## python vertirtual env
-	echo "creating python venv env at /usr/python/venv/longscave"
-	chmod a+w -R /usr/python
-	python -m venv /usr/python/venv/longscave
-	source /usr/python/venv/longscave/bin/activate
+	echo "creating python venv env at /usr/local/venv/longscave"
+	chmod a+w -R /usr/local
+	python -m venv /usr/local/venv/longscave
+	source /usr/local/venv/longscave/bin/activate
 else
 	echo "python virtualenv exists"
 fi
@@ -238,9 +238,10 @@ git clone https://github.com/xiaolongwu1987/longscave.git
 chown -R xiaowu:xiaowu /home/xiaowu/longscave
 #mv microblog longscave
 cd longscave || exit
-source /usr/python/venv/longscave/bin/activate
+source /usr/local/venv/longscave/bin/activate
 echo "pip install requirements"
-pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+#pip install -r requirements.txt  -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+pip install -r requirements.txt  --trusted-host mirrors.aliyun.com
   if [ $? == 1 ];then
   echo "failed, exit now"
   exit 1
@@ -255,7 +256,7 @@ chown xiaowu:xiaowu -R /home/xiaowu/longscave
 
 
 # install guess_language package
-source /usr/python/venv/longscave/bin/activate
+source /usr/local/venv/longscave/bin/activate
 pip freeze | grep guess-language
 if [ $? == 1 ];then
 echo "install guess_language"
@@ -273,7 +274,7 @@ wget https://files.pythonhosted.org/packages/8b/4f/9ed0280b24e9e6875c3870a97659d
 	  exit 1
 	  fi
 tar -jxvf guess_language-spirit-0.5.3.tar.bz2
-source /usr/python/venv/longscave/bin/activate
+source /usr/local/venv/longscave/bin/activate
 cd /tmp/guess_languagetmp/guess_language-spirit-0.5.3 || exit
 python setup.py install
 else
@@ -297,7 +298,7 @@ git clone https://github.com/Supervisor/supervisor.git
 	  exit 1
 	  fi
 fi
-if [ ! -f "/usr/python/venv/longscave/bin/supervisord" ];then
+if [ ! -f "/usr/local/venv/longscave/bin/supervisord" ];then
 cd /tmp/supervisortmp/supervisor || exit
 python setup.py install
 fi
@@ -305,7 +306,7 @@ fi
 # TODO: remate "unix:///tmp/supervisor" to "unix:///var/run/supervisor.sock", as well as sock, pid, socket, log file out
 #  of tmp dir, or it will complain "unix:///tmp/supervisor.sock no such file" when do supervisor start/stop/reload app
 if [ ! -f "/etc/supervisor/conf.d/longscave.ini" ];then
-/usr/python/venv/longscave/bin/echo_supervisord_conf > /etc/supervisor/supervisord.conf
+/usr/local/venv/longscave/bin/echo_supervisord_conf > /etc/supervisor/supervisord.conf
 cat>>/etc/supervisor/supervisord.conf<<EOF
 [include]
 files = /etc/supervisor/conf.d/*.ini
@@ -313,7 +314,7 @@ EOF
 touch /etc/supervisor/conf.d/longscave.ini
 cat>>/etc/supervisor/conf.d/longscave.ini<<EOF
 [program:longscave]
-command=/usr/python/venv/longscave/bin/gunicorn -b localhost:8000 -w 4 longscave:app
+command=/usr/local/venv/longscave/bin/gunicorn -b localhost:8000 -w 4 longscave:app
 directory=/home/xiaowu/longscave
 user=xiaowu
 autostart=true
@@ -323,15 +324,15 @@ killasgroup=true
 EOF
 fi
 echo "start supervisord"
-/usr/python/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
+/usr/local/venv/longscave/bin/supervisord -c /etc/supervisor/supervisord.conf
 
 
 yum -y -q install net-tools
 netstat -tnpl | grep 8000
 if [ $? == 1 ]; then
 	echo "starting longscave web app"
-	/usr/python/venv/longscave/bin/supervisorctl reload
-	/usr/python/venv/longscave/bin/supervisorctl start longscave
+	/usr/local/venv/longscave/bin/supervisorctl reload
+	/usr/local/venv/longscave/bin/supervisorctl start longscave
 	netstat -ntpl | grep 8000
 	if [ $? == 0 ];then
 	echo "web app started successfully"
@@ -393,7 +394,7 @@ elif [ $myssl == "certbot" ];then
 	cp /home/xiaowu/longscave/nginxconf/letencrypt.conf /etc/nginx/conf.d/
 	if [ ! -f "/etc/letsencrypt/live/longscave.top/fullchain.pem" ];then
 	  echo "certificate failed, clean up certification trace"
-	  mv -f /etc/nginx/conf.d/letencrypt.conf
+	  rm -f /etc/nginx/conf.d/letencrypt.conf
 	nginx -s reload
 fi	
 
@@ -433,7 +434,7 @@ if [ $? == 1 ];then
   # database migration
   echo "flask db upgrade"
   cd /home/xiaowu/longscave || exit
-  source /usr/python/venv/longscave/bin/activate
+  source /usr/local/venv/longscave/bin/activate
   # set up env, or flask db upgrade will fail because ascii code issue with click package
   export LC_ALL=en_US.utf-8
   export LANG=en_US.utf-8
