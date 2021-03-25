@@ -29,6 +29,7 @@ ckeditor = CKEditor()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    app.debug = True
     app.config.from_object(config_class)
 
     db.init_app(app)
@@ -64,6 +65,10 @@ def create_app(config_class=Config):
 
     from app.visitor import bp as visitor_bp
     app.register_blueprint(visitor_bp)
+
+    from app.teaching import bp as teaching_bp
+    app.register_blueprint(teaching_bp, url_prefix='/teaching')
+
 
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
