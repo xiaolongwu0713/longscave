@@ -355,7 +355,7 @@ if [ $? == 1 ];then
 	  fi
 fi
 current_time=$(date "+%Y%m%d-%H%M%S")
-mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak.$current_time
+mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak.$current_time || true
 mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak.$current_time
 cp /home/xiaowu/longscave/nginxconf/nginx.conf /etc/nginx/
 # restart nginx, or certbot will fail
